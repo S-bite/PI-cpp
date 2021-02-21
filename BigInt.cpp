@@ -5,6 +5,7 @@
 #include "BigInt.h"
 #include "FFT.h"
 
+#include <cassert>
 #include <iostream>
 #include <math.h>
 #include <stdio.h>
@@ -57,6 +58,7 @@ void UpdateBigInt(BigInt *A)
 
   for (i = 0; i < A->Size; i++)
   {
+    assert(A->Coef[i] >= 0);
     x = A->Coef[i] + carry;
     carry = floor(x * invBASE);
     A->Coef[i] = x - carry * BASE;
@@ -111,8 +113,10 @@ void AddBigInt(BigInt *A, BigInt *B, BigInt *C)
  */
 void MulBigInt(BigInt *A, BigInt *B, BigInt *C)
 {
-  MulWithFFT(A->Coef, B->Coef, C->Coef);
+  MulWithFFT(A->Coef, A->Size, B->Coef, B->Size, C->Coef);
   C->Size = A->Size + B->Size - 1;
+  C->SizeMax = std::max(C->SizeMax, C->Size);
+
   UpdateBigInt(C);
 }
 
@@ -120,9 +124,10 @@ void TrimBigInt(BigInt *from, BigInt *to, long start, long end)
 {
 
   InitializeBigInt(to, end - start);
+  to->Size = end - start;
   for (long i = start; i < end; i++)
   {
-    to->Coef[i] = from->Coef[i];
+    to->Coef.at(i - start) = from->Coef.at(i);
   }
 }
 
@@ -135,7 +140,6 @@ void Inverse(BigInt *A, BigInt *B, BigInt *tmpBigInt)
   long i, N, NN, Delta;
   int Twice = 1, Sign;
   BigInt AA;
-
   /* Initialization */
   x = A->Coef[A->Size - 1] +
       invBASE * (A->Coef[A->Size - 2] + invBASE * A->Coef[A->Size - 3]);
@@ -153,7 +157,10 @@ void Inverse(BigInt *A, BigInt *B, BigInt *tmpBigInt)
     if (NN > A->Size)
       NN = A->Size;
     TrimBigInt(A, &AA, A->Size - NN, A->Size);
+    AA.Size = NN;
     MulBigInt(&AA, B, tmpBigInt);
+
+    //printf("%ld %ld %ld\n", AA.Size, AA.Coef.size(), tmpBigInt->Size);
     Delta = NN + B->Size - 1;
     /* Compute BASE^Delta-tmpBigInt in tmpBigInt */
     if (tmpBigInt->Size == Delta)

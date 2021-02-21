@@ -28,11 +28,13 @@ BigInt tmpBigInt; /* Temporary BigInt used in the binary splitting */
  * Compute the numerator P and denominator Q of
  * P/Q = 1/(N0+1) + 1/(N0+1)/(N0+2) + ... + 1/(N0+1)/.../N1
  */
-void BinarySplittingE(long N0, long N1, BigInt *P, BigInt *Q) {
+void BinarySplittingE(long N0, long N1, BigInt *P, BigInt *Q)
+{
   BigInt PP, QQ;
   long NMid;
 
-  if (N1 - N0 == 1) {
+  if (N1 - N0 == 1)
+  {
     P->Size = Q->Size = 1;
     P->Coef[0] = 1.;
     Q->Coef[0] = (double)N1;
@@ -57,7 +59,8 @@ void BinarySplittingE(long N0, long N1, BigInt *P, BigInt *Q) {
 /*
  * Returns as a BigInt the constant E with NbDec decimal digits
  */
-BigInt ECompute(long NbDec) {
+BigInt ECompute(long NbDec)
+{
   BigInt P, Q, tmp;
   long i, MaxSize, MaxFFTSize, SeriesSize;
   double logFactorial, logMax;
@@ -83,7 +86,8 @@ BigInt ECompute(long NbDec) {
   SeriesSize = 1;
   logFactorial = 0.;
   logMax = (double)NbDec * log(10.);
-  while (logFactorial < logMax) {
+  while (logFactorial < logMax)
+  {
     logFactorial += log((double)SeriesSize);
     SeriesSize++;
   }
@@ -93,7 +97,6 @@ BigInt ECompute(long NbDec) {
      sum_{i=0}^{SeriesSize} 1/i! */
   BinarySplittingE(0, SeriesSize, &P, &Q);
   AddBigInt(&P, &Q, &P);
-
   printf("Starting final division\n");
   /* Compute the inverse of Q in tmpBigInt */
   Inverse(&Q, &tmpBigInt, &tmp);
@@ -108,50 +111,25 @@ BigInt ECompute(long NbDec) {
   return P;
 }
 
-// int main() {
-//   double StartTime;
-//   BigInt E;
-//   long NbDec;
+int main()
+{
+  double StartTime;
+  BigInt E;
+  long NbDec;
 
-//   printf("*** E computation *** \n\n");
-//   printf("Enter the number of decimal digits : ");
-//   scanf("%ld", &NbDec);
-//   printf("\n");
-//   StartTime = (double)clock();
-//   E = ECompute(NbDec);
-//   printf("\n");
-//   printf("Total time : %.2lf seconds\n",
-//          ((double)clock() - StartTime) / CLOCKS_PER_SEC);
-//   printf("Worst error in FFT (should be less than 0.25): %.10lf\n",
-//          sqrt(FFTSquareWorstError));
-//   printf("\n");
-//   printf("E = ");
-//   PrintBigInt(&E);
-//   printf("\n");
-// }
-
-int main() {
-  BigInt a, b, c;
-  InitializeFFT(1024);
-  InitializeBigInt(&a, 10);
-  InitializeBigInt(&b, 10);
-  InitializeBigInt(&c, 10);
-
-  a.Size = 1;
-  a.Coef[0] = 1234;
-  b.Size = 1;
-  b.Coef[0] = 1234;
-  UpdateBigInt(&a);
-  UpdateBigInt(&b);
-  PrintBigInt(&a);
-
-  MulBigInt(&a, &b, &c);
-  UpdateBigInt(&c);
-  for (int i = 0; i < 10; i++) {
-
-    MulBigInt(&a, &c, &c);
-    UpdateBigInt(&c);
-  }
-
-  PrintBigInt(&c);
+  printf("*** E computation *** \n\n");
+  printf("Enter the number of decimal digits : ");
+  scanf("%ld", &NbDec);
+  printf("\n");
+  StartTime = (double)clock();
+  E = ECompute(NbDec);
+  printf("\n");
+  printf("Total time : %.2lf seconds\n",
+         ((double)clock() - StartTime) / CLOCKS_PER_SEC);
+  printf("Worst error in FFT (should be less than 0.25): %.10lf\n",
+         sqrt(FFTSquareWorstError));
+  printf("\n");
+  printf("E = ");
+  PrintBigInt(&E);
+  printf("\n");
 }

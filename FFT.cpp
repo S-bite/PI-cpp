@@ -137,12 +137,11 @@ void Convolution(vector<complex<double>> &A, vector<complex<double>> &B,
   }
 }
 
-void MulWithFFT(vector<double> &ACoef, vector<double> &BCoef,
-                vector<double> &CCoef)
+void MulWithFFT(vector<double> &ACoef, long ASize, vector<double> &BCoef, long BSize, vector<double> &CCoef)
 {
   long NFFT = 2;
-  long ASize = ACoef.size();
-  long BSize = BCoef.size();
+  // long ASize = ACoef.size();
+  // long BSize = BCoef.size();
 
   while (NFFT < ASize + BSize)
     NFFT *= 2;

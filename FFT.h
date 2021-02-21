@@ -8,7 +8,7 @@ using Real = double;
 extern double FFTSquareWorstError;
 extern long AllocatedMemory;
 void InitializeFFT(long maxFFTLength);
-void MulWithFFT(std::vector<Real> &aCoef, std::vector<Real> &bCoef,
-                std::vector<Real> &cCoef);
+void MulWithFFT(std::vector<Real> &aCoef, long, std::vector<Real> &bCoef,
+                long, std::vector<Real> &cCoef);
 
 #endif
