@@ -1,5 +1,6 @@
 /*
- *  modified from: http://numbers.computation.free.fr/Constants/Programs/BigInt.c
+ *  modified from:
+ * http://numbers.computation.free.fr/Constants/Programs/BigInt.c
  */
 
 #include "BigInt.h"
@@ -17,27 +18,23 @@ using std::cout;
 using std::endl;
 using std::vector;
 
-void InitializeBigInt(BigInt *A, long MaxSize)
-{
+void InitializeBigInt(BigInt *A, long MaxSize) {
   A->Coef.resize(MaxSize);
   AllocatedMemory += MaxSize * sizeof(double);
   A->Size = 0;
   A->SizeMax = MaxSize;
 }
 
-void PrintBigInt(BigInt *A)
-{
+void PrintBigInt(BigInt *A) {
   long i, j, Digit = 0, Dec;
   double Pow, Coef;
 
   printf("%.0lf", A->Coef[A->Size - 1]);
 
-  for (i = A->Size - 2; i >= 0; i--)
-  {
+  for (i = A->Size - 2; i >= 0; i--) {
     Pow = BASE * 0.1;
     Coef = A->Coef[i];
-    for (j = 0; j < NBDEC_BASE; j++)
-    {
+    for (j = 0; j < NBDEC_BASE; j++) {
       Dec = (long)(Coef / Pow);
       Coef -= Dec * Pow;
       Pow *= 0.1;
@@ -51,35 +48,28 @@ void PrintBigInt(BigInt *A)
 /*
  * Update A to the normal form (0<= A.Coef[i] < BASE)
  */
-void UpdateBigInt(BigInt *A)
-{
+void UpdateBigInt(BigInt *A) {
   long i;
   Real carry = 0., x;
 
-  for (i = 0; i < A->Size; i++)
-  {
+  for (i = 0; i < A->Size; i++) {
     assert(A->Coef[i] >= 0);
     x = A->Coef[i] + carry;
     carry = floor(x * invBASE);
     A->Coef[i] = x - carry * BASE;
   }
-  if (carry != 0)
-  {
-    while (carry != 0.)
-    {
+  if (carry != 0) {
+    while (carry != 0.) {
       x = carry;
       carry = floor(x * invBASE);
       A->Coef[i] = x - carry * BASE;
       i++;
       A->Size = i;
     }
-    if (A->Size > A->SizeMax)
-    {
+    if (A->Size > A->SizeMax) {
       printf("Error in UpdateBigInt, Size>SizeMax\n");
     }
-  }
-  else
-  {
+  } else {
     while (i > 0 && A->Coef[i - 1] == 0.)
       i--;
     A->Size = i;
@@ -89,12 +79,10 @@ void UpdateBigInt(BigInt *A)
 /*
  * Compute C = A + B
  */
-void AddBigInt(BigInt *A, BigInt *B, BigInt *C)
-{
+void AddBigInt(BigInt *A, BigInt *B, BigInt *C) {
   long i;
 
-  if (A->Size < B->Size)
-  {
+  if (A->Size < B->Size) {
     AddBigInt(B, A, C);
     return;
   }
@@ -111,8 +99,7 @@ void AddBigInt(BigInt *A, BigInt *B, BigInt *C)
 /*
  * Compute C = A*B
  */
-void MulBigInt(BigInt *A, BigInt *B, BigInt *C)
-{
+void MulBigInt(BigInt *A, BigInt *B, BigInt *C) {
   MulWithFFT(A->Coef, A->Size, B->Coef, B->Size, C->Coef);
   C->Size = A->Size + B->Size - 1;
   C->SizeMax = std::max(C->SizeMax, C->Size);
@@ -120,13 +107,11 @@ void MulBigInt(BigInt *A, BigInt *B, BigInt *C)
   UpdateBigInt(C);
 }
 
-void TrimBigInt(BigInt *from, BigInt *to, long start, long end)
-{
+void TrimBigInt(BigInt *from, BigInt *to, long start, long end) {
 
   InitializeBigInt(to, end - start);
   to->Size = end - start;
-  for (long i = start; i < end; i++)
-  {
+  for (long i = start; i < end; i++) {
     to->Coef.at(i - start) = from->Coef.at(i);
   }
 }
@@ -134,8 +119,7 @@ void TrimBigInt(BigInt *from, BigInt *to, long start, long end)
 /*
  * Compute the inverse of A in B
  */
-void Inverse(BigInt *A, BigInt *B, BigInt *tmpBigInt)
-{
+void Inverse(BigInt *A, BigInt *B, BigInt *tmpBigInt) {
   long double x;
   long i, N, NN, Delta;
   int Twice = 1, Sign;
@@ -150,8 +134,7 @@ void Inverse(BigInt *A, BigInt *B, BigInt *tmpBigInt)
 
   /* Iteration used : B <- B+(1-AB)*B */
   N = 2;
-  while (N < A->Size)
-  {
+  while (N < A->Size) {
     /* Use only the first 2*N limbs of A */
     NN = 2 * N;
     if (NN > A->Size)
@@ -160,18 +143,15 @@ void Inverse(BigInt *A, BigInt *B, BigInt *tmpBigInt)
     AA.Size = NN;
     MulBigInt(&AA, B, tmpBigInt);
 
-    //printf("%ld %ld %ld\n", AA.Size, AA.Coef.size(), tmpBigInt->Size);
+    // printf("%ld %ld %ld\n", AA.Size, AA.Coef.size(), tmpBigInt->Size);
     Delta = NN + B->Size - 1;
     /* Compute BASE^Delta-tmpBigInt in tmpBigInt */
-    if (tmpBigInt->Size == Delta)
-    {
+    if (tmpBigInt->Size == Delta) {
       Sign = 1;
       for (i = 0; i < Delta; i++)
         tmpBigInt->Coef[i] = BASE - 1 - tmpBigInt->Coef[i];
       UpdateBigInt(tmpBigInt);
-    }
-    else
-    {
+    } else {
       Sign = -1;
       tmpBigInt->Coef[Delta] = 0.;
     }
@@ -185,21 +165,18 @@ void Inverse(BigInt *A, BigInt *B, BigInt *tmpBigInt)
     for (i = NN - N - 1; i >= 0; i--)
       B->Coef[i] = 0.;
     B->Size += NN - N;
-    if (Sign == -1)
-    {
+    if (Sign == -1) {
       for (i = 0; i < tmpBigInt->Size; i++)
         tmpBigInt->Coef[i] = -tmpBigInt->Coef[i];
     }
     AddBigInt(B, tmpBigInt, B);
     /* Once during the process, redo one iteration with same precision */
-    if (8 * N > A->Size && Twice)
-    {
+    if (8 * N > A->Size && Twice) {
       Twice = 0;
       B->Size = N;
       for (i = 0; i < N; i++)
         B->Coef[i] = B->Coef[i + N];
-    }
-    else
+    } else
       N *= 2;
   }
 }

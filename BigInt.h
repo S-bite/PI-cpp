@@ -1,12 +1,12 @@
 /*
- *  modified from: http://numbers.computation.free.fr/Constants/Programs/BigInt.h
+ *  modified from:
+ * http://numbers.computation.free.fr/Constants/Programs/BigInt.h
  */
 
 #ifndef BigInt_h
 #define BigInt_h
 #include <vector>
-struct BigInt
-{
+struct BigInt {
   std::vector<double> Coef;
   long Size, SizeMax;
 };
