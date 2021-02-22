@@ -103,7 +103,7 @@ void MulBigInt(BigInt *A, BigInt *B, BigInt *C) {
   MulWithFFT(A->Coef, A->Size, B->Coef, B->Size, C->Coef);
   C->Size = A->Size + B->Size - 1;
   C->SizeMax = std::max(C->SizeMax, C->Size);
-
+  C->Coef.resize(C->SizeMax);
   UpdateBigInt(C);
 }
 
