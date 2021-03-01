@@ -28,14 +28,14 @@ BigInt tmpBigInt; /* Temporary BigInt used in the binary splitting */
  * Compute the numerator P and denominator Q of
  * P/Q = 1/(N0+1) + 1/(N0+1)/(N0+2) + ... + 1/(N0+1)/.../N1
  */
-void BinarySplittingE(long N0, long N1, BigInt *P, BigInt *Q) {
+void BinarySplittingE(long N0, long N1, BigInt &P, BigInt &Q) {
   BigInt PP, QQ;
   long NMid;
 
   if (N1 - N0 == 1) {
-    P->Size = Q->Size = 1;
-    P->Coef[0] = 1.;
-    Q->Coef[0] = (double)N1;
+    P.Size = Q.Size = 1;
+    P.Coef[0] = 1.;
+    Q.Coef[0] = (double)N1;
     UpdateBigInt(P);
     UpdateBigInt(Q);
     return;
@@ -44,14 +44,14 @@ void BinarySplittingE(long N0, long N1, BigInt *P, BigInt *Q) {
   BinarySplittingE(N0, NMid, P, Q);
   /* To save memory, take the non used coefficients of P and Q
      for coefficient of the BigInt used in the second splitting part */
-  TrimBigInt(P, &PP, P->Size, P->SizeMax);
-  TrimBigInt(Q, &QQ, Q->Size, Q->SizeMax);
+  TrimBigInt(P, PP, P.Size, P.SizeMax);
+  TrimBigInt(Q, QQ, Q.Size, Q.SizeMax);
 
-  BinarySplittingE(NMid, N1, &PP, &QQ);
-  MulBigInt(P, &QQ, &tmpBigInt);
-  AddBigInt(&tmpBigInt, &PP, P);
+  BinarySplittingE(NMid, N1, PP, QQ);
+  MulBigInt(P, QQ, tmpBigInt);
+  AddBigInt(tmpBigInt, PP, P);
 
-  MulBigInt(Q, &QQ, Q);
+  MulBigInt(Q, QQ, Q);
 }
 
 /*
@@ -64,8 +64,8 @@ BigInt ECompute(long NbDec) {
 
   /* MaxSize should be more than NbDec/NBDEC_BASE (see BinarySplitting) */
   MaxSize = NbDec / NBDEC_BASE + 10 + (long)(2. * log((double)NbDec) / log(2.));
-  InitializeBigInt(&P, MaxSize);
-  InitializeBigInt(&Q, MaxSize);
+  InitializeBigInt(P, MaxSize);
+  InitializeBigInt(Q, MaxSize);
 
   MaxFFTSize = 2;
   while (MaxFFTSize < MaxSize)
@@ -73,8 +73,8 @@ BigInt ECompute(long NbDec) {
   MaxFFTSize *= 2;
   InitializeFFT(MaxFFTSize);
   /* Temporary BigInts are needed */
-  InitializeBigInt(&tmpBigInt, MaxFFTSize);
-  InitializeBigInt(&tmp, MaxFFTSize);
+  InitializeBigInt(tmpBigInt, MaxFFTSize);
+  InitializeBigInt(tmp, MaxFFTSize);
 
   printf("Total Allocated memory = %ld K\n", AllocatedMemory / 1024);
 
@@ -91,13 +91,13 @@ BigInt ECompute(long NbDec) {
   printf("Starting series computation\n");
   /* Compute the numerator P and the denominator Q of
      sum_{i=0}^{SeriesSize} 1/i! */
-  BinarySplittingE(0, SeriesSize, &P, &Q);
-  AddBigInt(&P, &Q, &P);
+  BinarySplittingE(0, SeriesSize, P, Q);
+  AddBigInt(P, Q, P);
   printf("Starting final division\n");
   /* Compute the inverse of Q in tmpBigInt */
-  Inverse(&Q, &tmpBigInt, &tmp);
+  Inverse(Q, tmpBigInt, tmp);
   /* Comute P/Q in tmpBigInt */
-  MulBigInt(&P, &tmpBigInt, &tmpBigInt);
+  MulBigInt(P, tmpBigInt, tmpBigInt);
 
   /* Put the number of required digits in P */
   P.Size = 1 + NbDec / NBDEC_BASE;
@@ -125,6 +125,6 @@ int main() {
          sqrt(FFTSquareWorstError));
   printf("\n");
   printf("E = ");
-  PrintBigInt(&E);
+  PrintBigInt(E);
   printf("\n");
 }
