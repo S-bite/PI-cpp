@@ -24,6 +24,14 @@ void InitializeBigInt(BigInt &A, long MaxSize) {
   A.Size = 0;
   A.SizeMax = MaxSize;
 }
+void DumpBigInt(BigInt &A) {
+  cerr << "=======================" << endl;
+  cerr << "Size:" << A.Size << endl;
+  cerr << "SizeMax:" << A.SizeMax << endl;
+  for (int i = 0; i < A.Size; i++) {
+    cerr << "Coef " << i << " :" << A.Coef[i] << endl;
+  }
+}
 
 void PrintBigInt(BigInt &A) {
   long i, j, Digit = 0, Dec;
@@ -66,7 +74,9 @@ void UpdateBigInt(BigInt &A) {
       A.Size = i;
     }
     if (A.Size > A.SizeMax) {
+
       printf("Error in UpdateBigInt, Size>SizeMax\n");
+      printf("Size: %ld, SizeMax: %ld\n", A.Size, A.SizeMax);
     }
   } else {
     while (i > 0 && A.Coef[i - 1] == 0.)
@@ -116,13 +126,30 @@ void TrimBigInt(BigInt &from, BigInt &to, long start, long end) {
 }
 
 /*
- * Compute the inverse of A in B
+ * Compute the inverse of A in B in given precision (-1:same precision as
+ * SizeMax of A)
  */
-void Inverse(BigInt &A, BigInt &B, BigInt &tmpBigInt) {
+void Inverse(BigInt &A, BigInt &B, BigInt &tmpBigInt, int precision) {
   long double x;
   long i, N, NN, Delta;
   int Twice = 1, Sign;
   BigInt AA;
+
+  if (precision == -1) {
+    precision = A.SizeMax - 10;
+  }
+  int oldASize = A.Size;
+  int shiftWidth = precision - oldASize;
+  assert(oldASize <= precision);
+  A.Size = precision;
+  for (int i = 0; i < A.Size; i++) {
+    if (i < oldASize) {
+      A.Coef[A.Size - 1 - i] = A.Coef[A.Size - 1 - i - shiftWidth];
+    } else {
+      A.Coef[A.Size - 1 - i] = 0;
+    }
+  }
+
   /* Initialization */
   x = A.Coef[A.Size - 1] +
       invBASE * (A.Coef[A.Size - 2] + invBASE * A.Coef[A.Size - 3]);

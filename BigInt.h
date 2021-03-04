@@ -6,7 +6,8 @@
 #ifndef BigInt_h
 #define BigInt_h
 #include <vector>
-struct BigInt {
+struct BigInt
+{
   std::vector<double> Coef;
   long Size, SizeMax;
 };
@@ -21,6 +22,7 @@ void PrintBigInt(BigInt &A);
 void UpdateBigInt(BigInt &A);
 void AddBigInt(BigInt &A, BigInt &B, BigInt &C);
 void MulBigInt(BigInt &A, BigInt &B, BigInt &C);
-void Inverse(BigInt &A, BigInt &B, BigInt &tmpBigInt);
+void Inverse(BigInt &A, BigInt &B, BigInt &tmpBigInt, int = -1);
+void DumpBigInt(BigInt &A);
 
 #endif
