@@ -16,7 +16,7 @@ constexpr long NBDEC_BASE = 4;
 void InitializeBigInt(BigInt &A, long MaxSize);
 void TrimBigInt(BigInt &from, BigInt &to, long start, long end);
 
-void PrintBigInt(BigInt &A);
+void PrintBigInt(BigInt &A, int dotPos = 0);
 
 void UpdateBigInt(BigInt &A);
 void AddBigInt(BigInt &A, BigInt &B, BigInt &C);

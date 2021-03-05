@@ -34,13 +34,21 @@ void DumpBigInt(BigInt &A) {
   }
 }
 
-void PrintBigInt(BigInt &A) {
+void PrintBigInt(BigInt &A, int dotPos) {
   long i, j, Digit = 0, Dec;
   double Pow, Coef;
 
   printf("%.0lf", A.Coef[A.Size - 1]);
 
   for (i = A.Size - 2; i >= 0; i--) {
+
+    if (dotPos >= 0) {
+      dotPos--;
+    }
+    if (dotPos == 0) {
+      printf(".");
+    }
+
     Pow = BASE * 0.1;
     Coef = A.Coef[i];
     for (j = 0; j < NBDEC_BASE; j++) {
