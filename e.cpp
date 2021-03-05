@@ -15,8 +15,8 @@
  *    http://xavier.gourdon.free.fr/Constants/constants.html
  */
 
-#include "BigInt.h"
-#include "FFT.h"
+#include "BigInt.hpp"
+#include "FFT.hpp"
 
 #include <math.h>
 #include <stdio.h>

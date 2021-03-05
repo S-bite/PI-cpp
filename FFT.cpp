@@ -1,7 +1,7 @@
 /*
  *  modified from: http://numbers.computation.free.fr/Constants/Programs/FFT.c
  */
-#include "FFT.h"
+#include "FFT.hpp"
 
 #include <math.h>
 #include <stdio.h>

@@ -3,11 +3,10 @@
  * http://numbers.computation.free.fr/Constants/Programs/BigInt.h
  */
 
-#ifndef BigInt_h
-#define BigInt_h
+#ifndef BIGINT_HPP
+#define BIGINT_HPP
 #include <vector>
-struct BigInt
-{
+struct BigInt {
   std::vector<double> Coef;
   long Size, SizeMax;
 };

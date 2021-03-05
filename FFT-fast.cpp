@@ -1,4 +1,4 @@
-#include "FFT.h"
+#include "FFT.hpp"
 #include <cassert>
 #include <complex>
 #include <iostream>

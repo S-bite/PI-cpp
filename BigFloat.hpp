@@ -1,6 +1,6 @@
-#ifndef BigFloat_h
-#define BigFloat_h
-#include "BigInt.h"
+#ifndef BIGFLOAT_HPP
+#define BIGFLOAT_HPP
+#include "BigInt.hpp"
 struct BigFloat {
   bool sign;
   int exp;

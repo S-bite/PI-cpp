@@ -3,8 +3,9 @@
  * http://numbers.computation.free.fr/Constants/Programs/BigInt.c
  */
 
-#include "BigInt.h"
-#include "FFT.h"
+#include "BigInt.hpp"
+
+#include "FFT.hpp"
 
 #include <cassert>
 #include <iostream>
