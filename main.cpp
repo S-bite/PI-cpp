@@ -1,5 +1,5 @@
-#include "BigInt.h"
-#include "FFT.h"
+#include "BigInt.hpp"
+#include "FFT.hpp"
 
 void test() {
   BigInt a, b, c;

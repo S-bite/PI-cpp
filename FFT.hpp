@@ -1,8 +1,8 @@
 /*
  *  modified from: http://numbers.computation.free.fr/Constants/Programs/FFT.h
  */
-#ifndef FFT_H
-#define FFT_H
+#ifndef FFT_HPP
+#define FFT_HPP
 #include <vector>
 using Real = double;
 extern double FFTSquareWorstError;
