@@ -21,7 +21,8 @@ vector<complex<double>> complexCoef;
 double FFTSquareWorstError;
 long AllocatedMemory;
 
-void InitializeFFT(long maxLength) {
+void InitializeFFT(long maxLength)
+{
   long i;
   Real Step;
 
@@ -31,7 +32,8 @@ void InitializeFFT(long maxLength) {
   arrayFFT1.resize(maxLength);
   complexCoef.resize(maxLength);
   Step = 2. * PI / (double)maxLength;
-  for (i = 0; 2 * i < maxLength; i++) {
+  for (i = 0; 2 * i < maxLength; i++)
+  {
     omegaFFT[i] = complex<double>(cos(Step * (double)i), sin(Step * (double)i));
   }
   FFTSquareWorstError = 0.;
@@ -41,12 +43,14 @@ void InitializeFFT(long maxLength) {
 // [start,end)
 void RecursiveFFT(vector<complex<double>> &Coef, long CoefOffset,
                   vector<complex<double>> &FFT, long start, long end, long Step,
-                  long Sign) {
+                  long Sign)
+{
   long i, OmegaStep;
   vector<complex<double>> Omega;
   Real tmpR, tmpI;
   long Length = end - start;
-  if (Length == 2) {
+  if (Length == 2)
+  {
     FFT[start].real(Coef[CoefOffset].real() + Coef[CoefOffset + Step].real());
     FFT[start].imag(Coef[CoefOffset].imag() + Coef[CoefOffset + Step].imag());
 
@@ -65,7 +69,8 @@ void RecursiveFFT(vector<complex<double>> &Coef, long CoefOffset,
 
   Omega = omegaFFT;
   OmegaStep = FFTLengthMax / Length;
-  for (i = 0; 2 * i < Length; i++) {
+  for (i = 0; 2 * i < Length; i++)
+  {
     /* Recursion formula for FFT :
    FFT[i]          <-  FFT0[i] + Omega*FFT1[i]
    FFT[i+Length/2] <-  FFT0[i] - Omega*FFT1[i],
@@ -84,14 +89,17 @@ void RecursiveFFT(vector<complex<double>> &Coef, long CoefOffset,
 
 /* Compute the complex Fourier Transform of Coef into FFT */
 void FFT(vector<double> &Coef, long Length, vector<complex<double>> &FFT,
-         long NFFT) {
+         long NFFT)
+{
   long i;
   /* Transform array of real coefficient into array of complex */
-  for (i = 0; i < Length; i++) {
+  for (i = 0; i < Length; i++)
+  {
     complexCoef[i].real(Coef[i]);
     complexCoef[i].imag(0);
   }
-  for (; i < NFFT; i++) {
+  for (; i < NFFT; i++)
+  {
     complexCoef[i].real(0);
     complexCoef[i].imag(0);
   }
@@ -100,12 +108,14 @@ void FFT(vector<double> &Coef, long Length, vector<complex<double>> &FFT,
 
 /* Compute the inverse Fourier Transform of FFT into Coef */
 void InverseFFT(vector<complex<double>> &FFT, long NFFT, vector<double> &Coef,
-                long Length) {
+                long Length)
+{
   long i;
   Real invNFFT = 1. / (Real)NFFT, tmp;
 
   RecursiveFFT(FFT, 0, complexCoef, 0, NFFT, 1, -1);
-  for (i = 0; i < Length; i++) {
+  for (i = 0; i < Length; i++)
+  {
     /* Closest integer to ComplexCoef[i].R/NFFT */
     tmp = invNFFT * complexCoef[i].real();
     Coef[i] = floor(0.5 + tmp);
@@ -115,11 +125,13 @@ void InverseFFT(vector<complex<double>> &FFT, long NFFT, vector<double> &Coef,
 }
 
 void Convolution(vector<complex<double>> &A, vector<complex<double>> &B,
-                 long NFFT, vector<complex<double>> &C) {
+                 long NFFT, vector<complex<double>> &C)
+{
   long i;
   Real tmpR, tmpI;
 
-  for (i = 0; i < NFFT; i++) {
+  for (i = 0; i < NFFT; i++)
+  {
     tmpR = A[i].real() * B[i].real() - A[i].imag() * B[i].imag();
     tmpI = A[i].real() * B[i].imag() + A[i].imag() * B[i].real();
     C[i].real(tmpR);
@@ -128,7 +140,8 @@ void Convolution(vector<complex<double>> &A, vector<complex<double>> &B,
 }
 
 void MulWithFFT(vector<double> &ACoef, long ASize, vector<double> &BCoef,
-                long BSize, vector<double> &CCoef) {
+                long BSize, vector<double> &CCoef)
+{
   long NFFT = 2;
   // long ASize = ACoef.size();
   // long BSize = BCoef.size();
@@ -136,7 +149,8 @@ void MulWithFFT(vector<double> &ACoef, long ASize, vector<double> &BCoef,
   while (NFFT < ASize + BSize)
     NFFT *= 2;
 
-  if (NFFT > FFTLengthMax) {
+  if (NFFT > FFTLengthMax)
+  {
     printf("Error, FFT Size is too big in MulWithFFT\n");
   }
   FFT(ACoef, ASize, arrayFFT0, NFFT);

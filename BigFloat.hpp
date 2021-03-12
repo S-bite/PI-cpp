@@ -3,7 +3,8 @@
 #include "BigInt.hpp"
 constexpr bool POSI = true;
 constexpr bool NEGA = false;
-struct BigFloat {
+struct BigFloat
+{
   bool sign;
   int exponent;
   BigInt fraction;

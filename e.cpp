@@ -28,11 +28,13 @@ BigInt tmpBigInt; /* Temporary BigInt used in the binary splitting */
  * Compute the numerator P and denominator Q of
  * P/Q = 1/(N0+1) + 1/(N0+1)/(N0+2) + ... + 1/(N0+1)/.../N1
  */
-void BinarySplittingE(long N0, long N1, BigInt &P, BigInt &Q) {
+void BinarySplittingE(long N0, long N1, BigInt &P, BigInt &Q)
+{
   BigInt PP, QQ;
   long NMid;
 
-  if (N1 - N0 == 1) {
+  if (N1 - N0 == 1)
+  {
     P.Size = Q.Size = 1;
     P.Coef[0] = 1.;
     Q.Coef[0] = (double)N1;
@@ -57,7 +59,8 @@ void BinarySplittingE(long N0, long N1, BigInt &P, BigInt &Q) {
 /*
  * Returns as a BigInt the constant E with NbDec decimal digits
  */
-BigInt ECompute(long NbDec) {
+BigInt ECompute(long NbDec)
+{
   BigInt P, Q, tmp;
   long i, MaxSize, MaxFFTSize, SeriesSize;
   double logFactorial, logMax;
@@ -83,7 +86,8 @@ BigInt ECompute(long NbDec) {
   SeriesSize = 1;
   logFactorial = 0.;
   logMax = (double)NbDec * log(10.);
-  while (logFactorial < logMax) {
+  while (logFactorial < logMax)
+  {
     logFactorial += log((double)SeriesSize);
     SeriesSize++;
   }
@@ -107,7 +111,8 @@ BigInt ECompute(long NbDec) {
   return P;
 }
 
-int main() {
+int main()
+{
   double StartTime;
   BigInt E;
   long NbDec;

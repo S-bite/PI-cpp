@@ -1,7 +1,8 @@
 #include "BigFloat.hpp"
 #include "FFT.hpp"
 
-void test() {
+void test()
+{
   BigFloat a, b, c;
   InitializeFFT(1024);
   InitializeBigFloat(a, POSI, -1, 31415);
