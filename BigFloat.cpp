@@ -3,6 +3,9 @@
 #include <cassert>
 #include <iostream>
 #include <vector>
+using std::cerr;
+using std::cout;
+using std::endl;
 
 void InitializeBigFloat(BigFloat &A, bool sign, int exponent, int fraction)
 {
@@ -41,19 +44,25 @@ void AddBigFloat(BigFloat &A, BigFloat &B, BigFloat &C)
     C.sign = A.sign;
     if (A.exponent > B.exponent)
     {
-      int oldExponent = A.exponent;
+      int oldExponent = B.exponent;
       changeExp(A, B.exponent);
       AddBigInt(A.fraction, B.fraction, C.fraction);
       C.exponent = B.exponent;
-      A.exponent = oldExponent;
+      changeExp(A, oldExponent);
     }
     else
     {
       int oldExponent = B.exponent;
       changeExp(B, A.exponent);
       AddBigInt(A.fraction, B.fraction, C.fraction);
+      // cerr << "--------" << endl;
+      // PrintBigFloat(A);
+      // PrintBigFloat(B);
+
+      // cerr << "--------" << endl;
+
       C.exponent = A.exponent;
-      B.exponent = oldExponent;
+      changeExp(B, oldExponent);
     }
   }
   else
@@ -67,9 +76,121 @@ void SubBigFloat(BigFloat &A, BigFloat &B, BigFloat &C) {}
 void DivideBigFloat(BigFloat &A, BigFloat &B, BigFloat &C) {}
 void Inverse(BigFloat &A, BigFloat &B, BigFloat &tmp) {}
 void DumpBigFloat(BigFloat &A) {}
+
+int getDigitNum(int num)
+{
+
+  if (num < 10)
+  {
+    return 1;
+  }
+  else if (num < 100)
+  {
+    return 2;
+  }
+  else if (num < 1000)
+  {
+    return 3;
+  }
+  else
+  {
+    assert(num < 10000);
+    return 4;
+  }
+}
+int getDigit(int num, int pos)
+{
+
+  for (int i = 0; i < pos; i++)
+  {
+    num /= 10;
+  }
+  return num % 10;
+}
 void PrintBigFloat(BigFloat &A)
 {
-  // TODO 表示がバグるのを直す
+  // TODO リファクタリング
   std::cout << (A.sign == POSI ? "" : "-");
-  PrintBigInt(A.fraction, -A.exponent);
+  // cerr << "!" << A.exponent << endl;
+  // cerr << "!" << A.fraction.Size << endl;
+
+  int pointPos = A.exponent;
+  bool didPrintNonZero = false;
+  // cerr << pointPos << endl;
+  if (pointPos <= 0)
+  {
+    pointPos = A.fraction.Size - 1 + pointPos;
+    if (pointPos < 0)
+    {
+      //cerr << "!!!!!!!a" << endl;
+      std::cout << "0.";
+      for (int i = 0; i < -pointPos - 1; i++)
+      {
+
+        std::cout << "0000";
+      }
+      didPrintNonZero = true;
+      for (int i = A.fraction.Size - 1; i >= 0; i--)
+      {
+        for (int j = 0; j < NBDEC_BASE; j++)
+        {
+          if (didPrintNonZero || getDigit(A.fraction.Coef[i], NBDEC_BASE - 1 - j) != 0)
+          {
+            didPrintNonZero = true;
+            std::cout << getDigit(A.fraction.Coef[i], NBDEC_BASE - 1 - j);
+          }
+        }
+      }
+      std::cout << std::endl;
+    }
+    else
+    {
+      //cerr << "!!!!!!!b" << endl;
+
+      for (int i = A.fraction.Size - 1; i >= 0; i--)
+      {
+        for (int j = 0; j < NBDEC_BASE; j++)
+        {
+          if (didPrintNonZero || getDigit(A.fraction.Coef[i], NBDEC_BASE - 1 - j) != 0)
+          {
+            didPrintNonZero = true;
+            std::cout << getDigit(A.fraction.Coef[i], NBDEC_BASE - 1 - j);
+          }
+        }
+
+        if (pointPos == 0)
+        {
+          cout << ".";
+        }
+        pointPos--;
+      }
+      std::cout << std::endl;
+    }
+  }
+  else
+  {
+    //cerr << "!!!!!!!c" << endl;
+
+    long long tmp = A.exponent;
+
+    for (int i = A.fraction.Size - 1; i >= 0; i--)
+    {
+      for (int j = 0; j < NBDEC_BASE; j++)
+      {
+        if (didPrintNonZero || getDigit(A.fraction.Coef[i], NBDEC_BASE - 1 - j) != 0)
+        {
+          didPrintNonZero = true;
+          std::cout << getDigit(A.fraction.Coef[i], NBDEC_BASE - 1 - j);
+        }
+      }
+    }
+    for (int i = 0; i < pointPos; i++)
+    {
+      for (int j = 0; j < NBDEC_BASE; j++)
+      {
+        std::cout << 0;
+      }
+    }
+    std::cout << std::endl;
+  }
 }
