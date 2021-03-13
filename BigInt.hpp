@@ -10,6 +10,10 @@ struct BigInt
 {
   std::vector<double> Coef;
   long Size, SizeMax;
+  int operator==(BigInt obj)
+  {
+    return this->Coef == obj.Coef && this->Size == obj.Size;
+  }
 };
 constexpr long BASE = 10000;
 constexpr double invBASE = 0.0001;
