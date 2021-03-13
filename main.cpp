@@ -9,27 +9,13 @@ void test()
 {
   BigFloat a, b, c;
   InitializeFFT(1024);
-  InitializeBigFloat(a, NEGA, -10, 1234);
-  InitializeBigFloat(b, NEGA, -2, 314159265);
+  InitializeBigFloat(a, POSI, -1, 31415);
+  InitializeBigFloat(b, NEGA, -2, 1);
   InitializeBigFloat(c);
   PrintBigFloat(a);
   PrintBigFloat(b);
-  cerr << "Bigger is ";
-  if (CompareAbs(a, b) > 0)
-  {
-    PrintBigFloat(a);
-  }
-  if (CompareAbs(a, b) < 0)
-  {
-    PrintBigFloat(b);
-  }
-  if (CompareAbs(a, b) == 0)
-  {
-    cerr << "Both" << endl;
-  }
-  SubBigFloat(a, b, c);
-  PrintBigFloat(a);
-  PrintBigFloat(b);
+  //AddBigFloat(a, b, b);
+  Inverse(a, c);
   PrintBigFloat(c);
 }
 

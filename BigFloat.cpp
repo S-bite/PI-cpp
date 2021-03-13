@@ -57,8 +57,8 @@ int CompareAbs(BigFloat &A, BigFloat &B)
 
 void changeExp(BigFloat &A, int exp)
 {
-  cerr << "1=============================" << endl;
-  PrintBigFloat(A);
+  //cerr << "1=============================" << endl;
+  //PrintBigFloat(A);
   int diff = exp - A.exponent;
   A.exponent = exp;
   if (diff > 0)
@@ -68,8 +68,8 @@ void changeExp(BigFloat &A, int exp)
     A.fraction.Coef = std::vector<double>(A.fraction.Coef.begin() + diff,
                                           A.fraction.Coef.end());
     A.fraction.Size -= diff;
-    PrintBigFloat(A);
-    cerr << "2=============================" << endl;
+    //PrintBigFloat(A);
+    // cerr << "2=============================" << endl;
   }
   else
   {
@@ -80,7 +80,13 @@ void changeExp(BigFloat &A, int exp)
     assert(A.fraction.Size <= A.fraction.SizeMax);
   }
 }
-
+void shrink(BigFloat &A)
+{
+  int diff = 0;
+  while (A.fraction.Coef[diff] == 0)
+    diff++;
+  changeExp(A, A.exponent + diff);
+}
 void AddBigFloat(BigFloat &A, BigFloat &B, BigFloat &C)
 {
   if (A.sign == B.sign)
@@ -128,16 +134,55 @@ void AddBigFloat(BigFloat &A, BigFloat &B, BigFloat &C)
       A.sign = !A.sign;
     }
   }
+  UpdateBigInt(C.fraction);
 }
-void MulBigFloat(BigFloat &A, BigFloat &B, BigFloat &C) {}
+void MulBigFloat(BigFloat &A, BigFloat &B, BigFloat &C)
+{
+  C.sign = !(A.sign ^ B.sign);
+  if (A.exponent > B.exponent)
+  {
+    int oldExponent = B.exponent;
+    changeExp(A, B.exponent);
+    MulBigInt(A.fraction, B.fraction, C.fraction);
+    C.exponent = A.exponent + B.exponent;
+    changeExp(A, oldExponent);
+  }
+  else
+  {
+    int oldExponent = B.exponent;
+    changeExp(B, A.exponent);
+    MulBigInt(A.fraction, B.fraction, C.fraction);
+    C.exponent = A.exponent + B.exponent;
+    changeExp(B, oldExponent);
+  }
+  shrink(C);
+}
 void SubBigFloat(BigFloat &A, BigFloat &B, BigFloat &C)
 {
   B.sign = !B.sign;
   AddBigFloat(A, B, C);
   B.sign = !B.sign;
+  UpdateBigInt(C.fraction);
 }
 void DivideBigFloat(BigFloat &A, BigFloat &B, BigFloat &C) {}
-void Inverse(BigFloat &A, BigFloat &B, BigFloat &tmp) {}
+void Inverse(BigFloat &A, BigFloat &B)
+{
+  BigFloat one, tmp, tmp2;
+  InitializeBigFloat(one, POSI, 0, 1);
+  InitializeBigFloat(tmp, POSI, 0, 1);
+  InitializeBigFloat(tmp2, POSI, 0, 1);
+
+  InitializeBigFloat(B, POSI, -1, 3000);
+  for (int i = 0; i < 5; i++)
+  {
+    //B = B + B * (1 - A * B);
+    MulBigFloat(A, B, tmp);
+    SubBigFloat(one, tmp, tmp2);
+    MulBigFloat(B, tmp2, tmp);
+    AddBigFloat(B, tmp, B);
+    UpdateBigInt(B.fraction);
+  }
+}
 void DumpBigFloat(BigFloat &A) {}
 
 int getDigitNum(int num)
