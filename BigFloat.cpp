@@ -16,16 +16,60 @@ void InitializeBigFloat(BigFloat &A, bool sign, int exponent, int fraction)
   A.fraction.Coef[0] = fraction;
   UpdateBigInt(A.fraction);
 }
+
+/*
+  compare absolute value of given BigFloat A,B
+  return value > 0 if abs(A) > abs(B)
+  return value < 0 if abs(A) < abs(B)
+  return value = 0 if abs(A) = abs(B)
+*/
+int CompareAbs(BigFloat &A, BigFloat &B)
+{
+  if (A.exponent + A.fraction.Size > B.exponent + B.fraction.Size)
+  {
+    return 1;
+  }
+  else if (A.exponent + A.fraction.Size < B.exponent + B.fraction.Size)
+  {
+    return -1;
+  }
+  else
+  {
+    int i = A.fraction.Size - 1;
+    int j = B.fraction.Size - 1;
+
+    for (; i >= 0 || j >= 0; i--, j--)
+    {
+      int a = (i < 0 ? 0 : A.fraction.Coef[i]);
+      int b = (j < 0 ? 0 : B.fraction.Coef[j]);
+      if (a > b)
+      {
+        return 1;
+      }
+      else if (a < b)
+      {
+        return -1;
+      }
+    }
+    return 0;
+  }
+}
+
 void changeExp(BigFloat &A, int exp)
 {
+  cerr << "1=============================" << endl;
+  PrintBigFloat(A);
   int diff = exp - A.exponent;
   A.exponent = exp;
   if (diff > 0)
   {
+    //assert(false);
     // expが増える→A.fractionを小さくする
     A.fraction.Coef = std::vector<double>(A.fraction.Coef.begin() + diff,
                                           A.fraction.Coef.end());
     A.fraction.Size -= diff;
+    PrintBigFloat(A);
+    cerr << "2=============================" << endl;
   }
   else
   {
@@ -67,12 +111,31 @@ void AddBigFloat(BigFloat &A, BigFloat &B, BigFloat &C)
   }
   else
   {
-    std::cerr << "Not Implemented" << std::endl;
-    assert(false);
+    if (CompareAbs(A, B) > 0)
+    {
+      B.sign = !B.sign;
+      FlipCoef(B.fraction);
+      AddBigFloat(A, B, C);
+      FlipCoef(B.fraction);
+      B.sign = !B.sign;
+    }
+    else
+    {
+      A.sign = !A.sign;
+      FlipCoef(A.fraction);
+      AddBigFloat(A, B, C);
+      FlipCoef(A.fraction);
+      A.sign = !A.sign;
+    }
   }
 }
 void MulBigFloat(BigFloat &A, BigFloat &B, BigFloat &C) {}
-void SubBigFloat(BigFloat &A, BigFloat &B, BigFloat &C) {}
+void SubBigFloat(BigFloat &A, BigFloat &B, BigFloat &C)
+{
+  B.sign = !B.sign;
+  AddBigFloat(A, B, C);
+  B.sign = !B.sign;
+}
 void DivideBigFloat(BigFloat &A, BigFloat &B, BigFloat &C) {}
 void Inverse(BigFloat &A, BigFloat &B, BigFloat &tmp) {}
 void DumpBigFloat(BigFloat &A) {}

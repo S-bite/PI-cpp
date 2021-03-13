@@ -37,6 +37,13 @@ void DumpBigInt(BigInt &A)
   }
 }
 
+void FlipCoef(BigInt &A)
+{
+  for (int i = A.Size - 1; i >= 0; i--)
+  {
+    A.Coef[i] = -A.Coef[i];
+  }
+}
 void PrintBigInt(BigInt &A, int dotPos)
 {
   long i, j, Digit = 0, Dec;

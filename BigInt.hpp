@@ -6,7 +6,8 @@
 #ifndef BIGINT_HPP
 #define BIGINT_HPP
 #include <vector>
-struct BigInt {
+struct BigInt
+{
   std::vector<double> Coef;
   long Size, SizeMax;
 };
@@ -17,7 +18,7 @@ void InitializeBigInt(BigInt &A, long MaxSize);
 void TrimBigInt(BigInt &from, BigInt &to, long start, long end);
 
 void PrintBigInt(BigInt &A, int dotPos = 0);
-
+void FlipCoef(BigInt &A);
 void UpdateBigInt(BigInt &A);
 void AddBigInt(BigInt &A, BigInt &B, BigInt &C);
 void MulBigInt(BigInt &A, BigInt &B, BigInt &C);

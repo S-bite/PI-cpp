@@ -10,6 +10,7 @@ struct BigFloat
   BigInt fraction;
 };
 
+int CompareAbs(BigFloat &A, BigFloat &B);
 void InitializeBigFloat(BigFloat &A, bool sign = POSI, int exponent = 0,
                         int fraction = 0);
 void changeExp(BigFloat &A, int exp);
