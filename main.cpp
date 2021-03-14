@@ -9,15 +9,21 @@ void test()
 {
   BigFloat a, b, c;
   InitializeFFT(1024);
-  InitializeBigFloat(a, POSI, 10, 22);
-  InitializeBigFloat(b, POSI, 10, 7);
+  InitializeBigFloat(a, POSI, 0, 2);
+  InitializeBigFloat(b, POSI, 10, 2);
 
   InitializeBigFloat(c);
   PrintBigFloat(a);
   // PrintBigFloat(b);
-  //Inverse(a, c);
-  DivideBigFloat(a, b, c);
-  //PrintBigFloat(c);
+  InverseSqrt(a, c);
+  cerr << "--------------------------" << endl;
+  PrintBigFloat(c);
+  Inverse(c, a);
+  //DivideBigFloat(a, b, c);
+  PrintBigFloat(a);
+  InitializeBigFloat(a, POSI, 0, 2);
+  MulBigFloat(c, b, a);
+  PrintBigFloat(a);
   cerr << toDouble(c) << endl;
 }
 

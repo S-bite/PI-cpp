@@ -8,6 +8,10 @@ struct BigFloat
   bool sign;
   int exponent;
   BigInt fraction;
+  // BigFloat(const BigFloat &rhs)
+  //     : sign(rhs.sign), exponent(rhs.exponent), fraction(rhs.fraction)
+  // {
+  // }
 };
 
 int CompareAbs(BigFloat &A, BigFloat &B);
@@ -21,7 +25,8 @@ void DivideBigFloat(BigFloat A, BigFloat B, BigFloat &C);
 void Inverse(BigFloat A, BigFloat &B);
 void DumpBigFloat(BigFloat &A);
 void PrintBigFloat(BigFloat &A);
-void InverseSqrt(BigFloat &A);
+void InverseSqrt(BigFloat A, BigFloat &B);
 double toDouble(BigFloat &A);
+void changePrecision(BigFloat &A, int prec);
 
 #endif

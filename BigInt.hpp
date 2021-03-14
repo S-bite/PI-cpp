@@ -14,6 +14,10 @@ struct BigInt
   {
     return this->Coef == obj.Coef && this->Size == obj.Size;
   }
+  // BigInt(const BigInt &rhs)
+  //   : Coef(rhs.Coef), Size(rhs.Size), SizeMax(rhs.SizeMax)
+  //   {
+  //   }
 };
 constexpr long BASE = 10000;
 constexpr double invBASE = 0.0001;

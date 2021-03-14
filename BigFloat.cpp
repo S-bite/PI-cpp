@@ -10,7 +10,7 @@ using std::endl;
 
 void InitializeBigFloat(BigFloat &A, bool sign, int exponent, int fraction)
 {
-  InitializeBigInt(A.fraction, 1000);
+  InitializeBigInt(A.fraction, 10000);
   A.exponent = exponent;
   A.sign = sign;
   A.fraction.Size = 1;
@@ -218,19 +218,22 @@ void DivideBigFloat(BigFloat A, BigFloat B, BigFloat &C)
 }
 void Inverse(BigFloat A, BigFloat &B)
 {
+  PrintBigFloat(A);
   BigFloat one, tmp, tmp2;
   InitializeBigFloat(one, POSI, 0, 1);
   InitializeBigFloat(tmp, POSI, 0, 1);
   InitializeBigFloat(tmp2, POSI, 0, 1);
+  changePrecision(A, 100);
+  PrintBigFloat(A);
   int init = (int)((1.0 / toDouble(A)) * (double)BASE * (double)BASE);
-  cerr << init << endl;
+  cerr << "init " << toDouble(A) << endl;
   //  cerr << (int)((1.0 / toDouble(A)) * (double)BASE) << endl;
   InitializeBigFloat(B, POSI, -2, init);
   PrintBigFloat(B);
   auto back = B.fraction;
   for (int i = 0;; i++)
   {
-    //PrintBigFloat(B);
+    PrintBigFloat(B);
     //B = B + B * (1 - A * B);
     MulBigFloat(A, B, tmp);
     SubBigFloat(one, tmp, tmp2);
@@ -243,7 +246,55 @@ void Inverse(BigFloat A, BigFloat &B)
     }
     //  PrintBigFloat(B);
     back = B.fraction;
-    changePrecision(B, B.fraction.SizeMax / 2);
+    changePrecision(B, 100);
+  }
+  // cerr << "done" << endl;
+}
+
+void InverseSqrt(BigFloat A, BigFloat &B)
+{
+  BigFloat one, half, tmp, tmp2;
+  InitializeBigFloat(one, POSI, 0, 1);
+  InitializeBigFloat(half, POSI, -1, 5000);
+  InitializeBigFloat(tmp, POSI, 0, 1);
+  InitializeBigFloat(tmp2, POSI, 0, 1);
+  int init = (int)((1.0 / sqrt(toDouble(A))) * (double)BASE * (double)BASE);
+  cerr << init << endl;
+  //  cerr << (int)((1.0 / toDouble(A)) * (double)BASE) << endl;
+  InitializeBigFloat(B, POSI, -2, init);
+  PrintBigFloat(B);
+  auto back = B.fraction;
+  for (int i = 0; i < 4; i++)
+  {
+    PrintBigFloat(B);
+    //B = B - 0.5 * B * (A * B * B - 1);
+    //  PrintBigFloat(B);
+    MulBigFloat(A, B, tmp);
+    //  changePrecision(tmp, tmp.fraction.SizeMax / 2 - 1);
+
+    MulBigFloat(B, tmp, tmp2);
+    //changePrecision(tmp, tmp.fraction.SizeMax / 2 - 1);
+
+    SubBigFloat(tmp2, one, tmp);
+    //changePrecision(tmp, tmp.fraction.SizeMax / 2 - 1);
+
+    MulBigFloat(B, tmp, tmp2);
+    //changePrecision(tmp, tmp.fraction.SizeMax / 2 - 1);
+
+    MulBigFloat(half, tmp2, tmp);
+    //changePrecision(tmp, tmp.fraction.SizeMax / 2 - 1);
+
+    SubBigFloat(B, tmp, B);
+    UpdateBigInt(B.fraction);
+    // changePrecision(tmp, tmp.fraction.SizeMax / 2 - 1);
+
+    if (B.fraction == back)
+    {
+      break;
+    }
+    //  PrintBigFloat(B);
+    back = B.fraction;
+    //changePrecision(B, 50);
   }
   // cerr << "done" << endl;
 }
@@ -280,6 +331,7 @@ int getDigit(int num, int pos)
   return num % 10;
 }
 void PrintBigFloat(BigFloat &A)
+
 {
   // TODO リファクタリング
   std::cout << (A.sign == POSI ? "" : "-");
