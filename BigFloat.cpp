@@ -198,17 +198,39 @@ void SubBigFloat(BigFloat A, BigFloat B, BigFloat &C)
   B.sign = !B.sign;
   //UpdateBigInt(C.fraction);
 }
-void DivideBigFloat(BigFloat &A, BigFloat &B, BigFloat &C) {}
+void DivideBigFloat(BigFloat A, BigFloat B, BigFloat &C)
+{
+  BigFloat tmp;
+  while (A.exponent > 0 && B.exponent > 0)
+  {
+    A.exponent--;
+    B.exponent--;
+  }
+  InitializeBigFloat(tmp, POSI, 0, 0);
+  cerr << "Inverse" << endl;
+  Inverse(B, tmp);
+  cerr << "Mul" << endl;
+  changePrecision(tmp, tmp.fraction.SizeMax / 2 - 1);
+  changePrecision(A, A.fraction.SizeMax / 2 - 1);
+
+  MulBigFloat(A, tmp, C);
+  PrintBigFloat(C);
+}
 void Inverse(BigFloat A, BigFloat &B)
 {
   BigFloat one, tmp, tmp2;
   InitializeBigFloat(one, POSI, 0, 1);
   InitializeBigFloat(tmp, POSI, 0, 1);
   InitializeBigFloat(tmp2, POSI, 0, 1);
-  InitializeBigFloat(B, POSI, -1, (int)((1.0 / toDouble(A)) * (double)BASE));
+  int init = (int)((1.0 / toDouble(A)) * (double)BASE * (double)BASE);
+  cerr << init << endl;
+  //  cerr << (int)((1.0 / toDouble(A)) * (double)BASE) << endl;
+  InitializeBigFloat(B, POSI, -2, init);
+  PrintBigFloat(B);
   auto back = B.fraction;
   for (int i = 0;; i++)
   {
+    //PrintBigFloat(B);
     //B = B + B * (1 - A * B);
     MulBigFloat(A, B, tmp);
     SubBigFloat(one, tmp, tmp2);
@@ -219,10 +241,11 @@ void Inverse(BigFloat A, BigFloat &B)
     {
       break;
     }
+    //  PrintBigFloat(B);
     back = B.fraction;
-    changePrecision(B, B.fraction.SizeMax / 2 - 1);
+    changePrecision(B, B.fraction.SizeMax / 2);
   }
-  cerr << "done" << endl;
+  // cerr << "done" << endl;
 }
 void DumpBigFloat(BigFloat &A) {}
 
