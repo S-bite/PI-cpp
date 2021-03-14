@@ -23,13 +23,9 @@ void PQT_merge(BigFloat &P, BigFloat &Q, BigFloat &T, BigFloat P1, BigFloat P2, 
   PrintBigFloat(P2);
   PrintBigFloat(Q2);
   PrintBigFloat(T2);
-  cerr << "P" << endl;
   MulBigFloat(P1, P2, P);
-  cerr << "P" << endl;
   MulBigFloat(Q1, Q2, Q);
-  cerr << "P" << endl;
-  MulBigFloat(T1, T2, T);
-  cerr << "P" << endl;
+  MulBigFloat(T1, Q2, T);
   MulBigFloat(P1, T2, P1);
 
   AddBigFloat(T, P1, T);
@@ -74,7 +70,7 @@ void binary_splitting(BigFloat &P, BigFloat &Q, BigFloat &T, long long l, long l
     InitializeBigFloat(tmp, POSI, 0, A);
 
     AddBigFloat(tmp2, tmp, tmp2);
-    if (r % 2 == 0)
+    if (r % 2 == 1)
     {
       tmp2.sign = !tmp2.sign;
     }
