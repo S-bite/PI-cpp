@@ -8,8 +8,9 @@ using std::cerr;
 using std::cout;
 using std::endl;
 
-void InitializeBigFloat(BigFloat &A, bool sign, int exponent, int fraction)
+void InitializeBigFloat(BigFloat &A, bool sign, int exponent, long long fraction)
 {
+  assert(fraction >= 0);
   InitializeBigInt(A.fraction, 10000);
   A.exponent = exponent;
   A.sign = sign;
@@ -218,6 +219,7 @@ void DivideBigFloat(BigFloat A, BigFloat B, BigFloat &C)
 }
 void Inverse(BigFloat A, BigFloat &B)
 {
+  cerr << "Invese()" << endl;
   PrintBigFloat(A);
   BigFloat one, tmp, tmp2;
   InitializeBigFloat(one, POSI, 0, 1);
@@ -225,10 +227,11 @@ void Inverse(BigFloat A, BigFloat &B)
   InitializeBigFloat(tmp2, POSI, 0, 1);
   changePrecision(A, 100);
   PrintBigFloat(A);
-  int init = (int)((1.0 / toDouble(A)) * (double)BASE * (double)BASE);
+  long long init = (long long)((1.0 / toDouble(A)) * (double)BASE * (double)BASE);
   cerr << "init " << toDouble(A) << endl;
   //  cerr << (int)((1.0 / toDouble(A)) * (double)BASE) << endl;
-  InitializeBigFloat(B, POSI, -2, init);
+  //InitializeBigFloat(B, POSI, -20, 6000);
+  InitializeBigFloat(B, POSI, -12, 6000);
   PrintBigFloat(B);
   auto back = B.fraction;
   for (int i = 0;; i++)
@@ -236,8 +239,8 @@ void Inverse(BigFloat A, BigFloat &B)
     PrintBigFloat(B);
     //B = B + B * (1 - A * B);
     MulBigFloat(A, B, tmp);
-    SubBigFloat(one, tmp, tmp2);
-    MulBigFloat(B, tmp2, tmp);
+    SubBigFloat(one, tmp, tmp);
+    MulBigFloat(B, tmp, tmp);
     AddBigFloat(B, tmp, B);
     UpdateBigInt(B.fraction);
     if (B.fraction == back)
@@ -246,7 +249,7 @@ void Inverse(BigFloat A, BigFloat &B)
     }
     //  PrintBigFloat(B);
     back = B.fraction;
-    changePrecision(B, 100);
+    changePrecision(B, 200);
   }
   // cerr << "done" << endl;
 }
@@ -270,23 +273,23 @@ void InverseSqrt(BigFloat A, BigFloat &B)
     //B = B - 0.5 * B * (A * B * B - 1);
     //  PrintBigFloat(B);
     MulBigFloat(A, B, tmp);
-    //  changePrecision(tmp, tmp.fraction.SizeMax / 2 - 1);
+    changePrecision(tmp, 100);
 
-    MulBigFloat(B, tmp, tmp2);
-    //changePrecision(tmp, tmp.fraction.SizeMax / 2 - 1);
+    MulBigFloat(B, tmp, tmp);
+    changePrecision(tmp, 100);
 
-    SubBigFloat(tmp2, one, tmp);
-    //changePrecision(tmp, tmp.fraction.SizeMax / 2 - 1);
+    SubBigFloat(tmp, one, tmp);
+    changePrecision(tmp, 100);
 
-    MulBigFloat(B, tmp, tmp2);
-    //changePrecision(tmp, tmp.fraction.SizeMax / 2 - 1);
+    MulBigFloat(B, tmp, tmp);
+    changePrecision(tmp, 100);
 
-    MulBigFloat(half, tmp2, tmp);
-    //changePrecision(tmp, tmp.fraction.SizeMax / 2 - 1);
+    MulBigFloat(half, tmp, tmp);
+    changePrecision(tmp, 100);
 
     SubBigFloat(B, tmp, B);
     UpdateBigInt(B.fraction);
-    // changePrecision(tmp, tmp.fraction.SizeMax / 2 - 1);
+    changePrecision(tmp, 100);
 
     if (B.fraction == back)
     {
@@ -294,7 +297,7 @@ void InverseSqrt(BigFloat A, BigFloat &B)
     }
     //  PrintBigFloat(B);
     back = B.fraction;
-    //changePrecision(B, 50);
+    changePrecision(B, 100);
   }
   // cerr << "done" << endl;
 }

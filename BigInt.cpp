@@ -95,6 +95,7 @@ void UpdateBigInt(BigInt &A)
   {
     while (carry != 0.)
     {
+      assert(i < A.Coef.size());
       x = carry;
       carry = floor(x * invBASE);
       A.Coef[i] = x - carry * BASE;
