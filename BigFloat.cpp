@@ -11,7 +11,7 @@ using std::endl;
 void InitializeBigFloat(BigFloat &A, bool sign, int exponent, long long fraction)
 {
   assert(fraction >= 0);
-  InitializeBigInt(A.fraction, 10000);
+  InitializeBigInt(A.fraction, 100000);
   A.exponent = exponent;
   A.sign = sign;
   A.fraction.Size = 1;
@@ -80,9 +80,11 @@ void changeExp(BigFloat &A, int exp)
     // expが減る→A.fractionを大きくする
     diff = -diff;
     A.fraction.Coef.insert(A.fraction.Coef.begin(), diff, 0);
+
     A.fraction.Size += diff;
     assert(A.fraction.Size <= A.fraction.SizeMax);
   }
+  assert(A.fraction.Size <= A.fraction.Coef.size());
 }
 void changePrecision(BigFloat &A, int prec)
 {
@@ -90,42 +92,71 @@ void changePrecision(BigFloat &A, int prec)
   {
     return;
   }
+  cerr << "changePrecision" << endl;
   int diff = A.fraction.Size - prec;
   A.exponent += diff;
+
   for (int i = 0; i < prec; i++)
   {
-    A.fraction.Coef[i] = A.fraction.Coef[i + diff];
+    if (i + diff < A.fraction.Coef.size())
+    {
+      A.fraction.Coef[i] = A.fraction.Coef[i + diff];
+    }
+    else
+    {
+      A.fraction.Coef[i] = 0;
+    }
   }
   A.fraction.Size = prec;
+
   A.fraction.Coef.resize(prec);
   assert(A.fraction.Size <= A.fraction.Coef.size());
   assert(A.fraction.Coef.size() <= A.fraction.SizeMax);
 }
 void shrink(BigFloat &A)
 {
+  assert(A.fraction.Size <= A.fraction.Coef.size());
   int diff = 0;
   while (A.fraction.Coef[diff] == 0)
     diff++;
+  cerr << diff << " " << A.fraction.Coef.size() << endl;
   changeExp(A, A.exponent + diff);
 }
 void AddBigFloat(BigFloat A, BigFloat B, BigFloat &C)
 {
+  assert(C.fraction.Size <= C.fraction.Coef.size());
+
   if (A.sign == B.sign)
   {
     C.sign = A.sign;
     if (A.exponent > B.exponent)
     {
+      assert(A.fraction.Size <= A.fraction.Coef.size());
+
       int oldExponent = B.exponent;
       changeExp(A, B.exponent);
+
+      assert(A.fraction.Size <= A.fraction.Coef.size());
+      assert(C.fraction.Size <= C.fraction.Coef.size());
       AddBigInt(A.fraction, B.fraction, C.fraction);
+      assert(C.fraction.Size <= C.fraction.Coef.size());
+
       C.exponent = B.exponent;
       changeExp(A, oldExponent);
+      assert(A.fraction.Size <= A.fraction.Coef.size());
+      assert(C.fraction.Size <= C.fraction.Coef.size());
     }
     else
     {
       int oldExponent = B.exponent;
       changeExp(B, A.exponent);
+      assert(A.fraction.Size <= A.fraction.Coef.size());
+      assert(C.fraction.Size <= C.fraction.Coef.size());
+
       AddBigInt(A.fraction, B.fraction, C.fraction);
+      assert(A.fraction.Size <= A.fraction.Coef.size());
+      assert(C.fraction.Size <= C.fraction.Coef.size());
+
       // cerr << "--------" << endl;
       // PrintBigFloat(A);
       // PrintBigFloat(B);
@@ -134,6 +165,8 @@ void AddBigFloat(BigFloat A, BigFloat B, BigFloat &C)
 
       C.exponent = A.exponent;
       changeExp(B, oldExponent);
+      assert(A.fraction.Size <= A.fraction.Coef.size());
+      assert(C.fraction.Size <= C.fraction.Coef.size());
     }
   }
   else
@@ -142,20 +175,27 @@ void AddBigFloat(BigFloat A, BigFloat B, BigFloat &C)
     {
       B.sign = !B.sign;
       FlipCoef(B.fraction);
+      assert(C.fraction.Size <= C.fraction.Coef.size());
       AddBigFloat(A, B, C);
+      assert(C.fraction.Size <= C.fraction.Coef.size());
       FlipCoef(B.fraction);
+      assert(C.fraction.Size <= C.fraction.Coef.size());
       B.sign = !B.sign;
     }
     else
     {
       A.sign = !A.sign;
       FlipCoef(A.fraction);
+      assert(C.fraction.Size <= C.fraction.Coef.size());
       AddBigFloat(A, B, C);
+      assert(C.fraction.Size <= C.fraction.Coef.size());
       FlipCoef(A.fraction);
+      assert(C.fraction.Size <= C.fraction.Coef.size());
       A.sign = !A.sign;
     }
   }
   UpdateBigInt(C.fraction);
+  assert(C.fraction.Size <= C.fraction.Coef.size());
 }
 
 double toDouble(BigFloat &A)
@@ -176,21 +216,21 @@ void MulBigFloat(BigFloat A, BigFloat B, BigFloat &C)
   C.sign = !(A.sign ^ B.sign);
   if (A.exponent > B.exponent)
   {
-    int oldExponent = B.exponent;
-    changeExp(A, B.exponent);
+    //int oldExponent = B.exponent;
+    //changeExp(A, B.exponent);
     MulBigInt(A.fraction, B.fraction, C.fraction);
     C.exponent = A.exponent + B.exponent;
-    changeExp(A, oldExponent);
+    //changeExp(A, oldExponent);
   }
   else
   {
-    int oldExponent = B.exponent;
-    changeExp(B, A.exponent);
+    //int oldExponent = A.exponent;
+    //changeExp(B, A.exponent);
     MulBigInt(A.fraction, B.fraction, C.fraction);
     C.exponent = A.exponent + B.exponent;
-    changeExp(B, oldExponent);
+    //changeExp(B, oldExponent);
   }
-  shrink(C);
+  //shrink(C);
 }
 void SubBigFloat(BigFloat A, BigFloat B, BigFloat &C)
 {
@@ -220,36 +260,52 @@ void DivideBigFloat(BigFloat A, BigFloat B, BigFloat &C)
 void Inverse(BigFloat A, BigFloat &B)
 {
   cerr << "Invese()" << endl;
-  PrintBigFloat(A);
+  //PrintBigFloat(A);
   BigFloat one, tmp, tmp2;
   InitializeBigFloat(one, POSI, 0, 1);
   InitializeBigFloat(tmp, POSI, 0, 1);
   InitializeBigFloat(tmp2, POSI, 0, 1);
   changePrecision(A, 100);
-  PrintBigFloat(A);
+  //PrintBigFloat(A);
   long long init = (long long)((1.0 / toDouble(A)) * (double)BASE * (double)BASE);
   cerr << "init " << toDouble(A) << endl;
   //  cerr << (int)((1.0 / toDouble(A)) * (double)BASE) << endl;
   //InitializeBigFloat(B, POSI, -20, 6000);
-  InitializeBigFloat(B, POSI, -12, 6000);
-  PrintBigFloat(B);
+  InitializeBigFloat(B, POSI, -20, 6000);
+  //PrintBigFloat(B);
   auto back = B.fraction;
-  for (int i = 0;; i++)
+  for (int i = 0; i < 100; i++)
   {
+    cerr << "start" << endl;
     PrintBigFloat(B);
     //B = B + B * (1 - A * B);
     MulBigFloat(A, B, tmp);
+    //PrintBigFloat(tmp);
+    assert(tmp.fraction.Size <= tmp.fraction.Coef.size());
     SubBigFloat(one, tmp, tmp);
+    //PrintBigFloat(tmp);
+    assert(tmp.fraction.Size <= tmp.fraction.Coef.size());
     MulBigFloat(B, tmp, tmp);
+    //PrintBigFloat(tmp);
+    assert(tmp.fraction.Size <= tmp.fraction.Coef.size());
     AddBigFloat(B, tmp, B);
+    assert(B.fraction.Size <= B.fraction.Coef.size());
+
+    //PrintBigFloat(B);
+    assert(B.fraction.Size <= B.fraction.Coef.size());
     UpdateBigInt(B.fraction);
+    //PrintBigFloat(B);
+    assert(B.fraction.Size <= B.fraction.Coef.size());
     if (B.fraction == back)
     {
       break;
     }
-    //  PrintBigFloat(B);
+    shrink(B);
+
+    // PrintBigFloat(B);
     back = B.fraction;
     changePrecision(B, 200);
+    //PrintBigFloat(B);
   }
   // cerr << "done" << endl;
 }
@@ -269,7 +325,7 @@ void InverseSqrt(BigFloat A, BigFloat &B)
   auto back = B.fraction;
   for (int i = 0; i < 4; i++)
   {
-    PrintBigFloat(B);
+    //  PrintBigFloat(B);
     //B = B - 0.5 * B * (A * B * B - 1);
     //  PrintBigFloat(B);
     MulBigFloat(A, B, tmp);

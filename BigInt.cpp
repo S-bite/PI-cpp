@@ -95,7 +95,10 @@ void UpdateBigInt(BigInt &A)
   {
     while (carry != 0.)
     {
-      assert(i < A.Coef.size());
+      if (i == A.Coef.size())
+      {
+        A.Coef.push_back(0);
+      }
       x = carry;
       carry = floor(x * invBASE);
       A.Coef[i] = x - carry * BASE;
@@ -127,8 +130,10 @@ void AddBigInt(BigInt &A, BigInt &B, BigInt &C)
   if (A.Size < B.Size)
   {
     AddBigInt(B, A, C);
+    assert(C.Size <= C.Coef.size());
     return;
   }
+  C.Coef.resize(A.Size);
   /* We now have B.Size<A.Size */
   for (i = 0; i < B.Size; i++)
     C.Coef[i] = A.Coef[i] + B.Coef[i];
@@ -136,7 +141,9 @@ void AddBigInt(BigInt &A, BigInt &B, BigInt &C)
     C.Coef[i] = A.Coef[i];
 
   C.Size = A.Size;
+  assert(C.Size <= C.Coef.size());
   UpdateBigInt(C);
+  assert(C.Size <= C.Coef.size());
 }
 
 /*

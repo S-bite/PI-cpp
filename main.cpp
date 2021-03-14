@@ -88,22 +88,40 @@ void binary_splitting(BigFloat &P, BigFloat &Q, BigFloat &T, long long l, long l
   }
 }
 
+/*
+  a=  1234    5678 * (10000)^-2=0.3333 3333
+     Coef[1] Coef[0] 
+  a=3333 3333 * (10000)^-2=0.3333 3333
+
+  a=3333 * (10000)^-1=0.3333
+  
+*/
+
 void test()
 {
   BigFloat a, b, c;
-  InitializeFFT(1024);
-  InitializeBigFloat(a, POSI, 0, 5);
+  InitializeBigFloat(a, POSI, 0, 3);
+  Inverse(a, a);
+  PrintBigFloat(a);
   InitializeBigFloat(b, POSI, 0, 231);
-  InitializeBigFloat(c);
+  InitializeBigFloat(c, POSI, 0, 0);
   MulBigFloat(a, b, c);
   PrintBigFloat(c);
+
+  // changePrecision(a, 220);
+  // PrintBigFloat(a);
+
+  // // a =  (BASE)^0*5
+  // InitializeBigFloat(b, POSI, 0, 231);
+  // InitializeBigFloat(c);
 }
 
 int main()
 {
-  test();
+  //test();
+  //  return 0;
   BigFloat P, Q, T, pi, tmp, _12, invSqrtC;
-  binary_splitting(P, Q, T, 0, 2);
+  binary_splitting(P, Q, T, 0, 4);
   cout << "P = ";
   PrintBigFloat(P);
   cout << "Q = ";
