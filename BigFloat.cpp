@@ -391,6 +391,35 @@ int getDigit(int num, int pos)
   }
   return num % 10;
 }
+
+void InitializeBigFloatFromString(BigFloat &A, string str)
+{
+  InitializeBigFloat(A, POSI, 0, 0);
+  int pos = 0;
+  string chunk = "";
+  for (int i = str.size() - 1; i >= 0; i--)
+  {
+    if (str[i] == '.')
+    {
+      // for BigFloat like .12345
+      if (i == 0)
+      {
+        A.fraction.Coef[pos++] = std::stoi(chunk);
+        A.fraction.Size++;
+        chunk = "";
+      }
+      continue;
+    }
+    chunk = str[i] + chunk;
+    if (chunk.size() == NBDEC_BASE || i == 0)
+    {
+      A.fraction.Coef[pos++] = std::stoi(chunk);
+      A.fraction.Size++;
+      chunk = "";
+    }
+  }
+}
+
 string toString(BigFloat &A)
 {
   string str = "";
