@@ -4,9 +4,11 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include <string>
 using std::cerr;
 using std::cout;
 using std::endl;
+using std::string;
 
 void InitializeBigFloat(BigFloat &A, bool sign, int exponent, long long fraction)
 {
@@ -389,11 +391,11 @@ int getDigit(int num, int pos)
   }
   return num % 10;
 }
-void PrintBigFloat(BigFloat &A)
-
+string toString(BigFloat &A)
 {
+  string str = "";
   // TODO リファクタリング
-  std::cout << (A.sign == POSI ? "" : "-");
+  str += (A.sign == POSI ? "" : "-");
   // cerr << "!" << A.exponent << endl;
   // cerr << "!" << A.fraction.Size << endl;
 
@@ -406,11 +408,11 @@ void PrintBigFloat(BigFloat &A)
     if (pointPos < 0)
     {
       //cerr << "!!!!!!!a" << endl;
-      std::cout << "0.";
+      str += "0.";
       for (int i = 0; i < -pointPos - 1; i++)
       {
 
-        std::cout << "0000";
+        str += "0000";
       }
       didPrintNonZero = true;
       for (int i = A.fraction.Size - 1; i >= 0; i--)
@@ -420,11 +422,11 @@ void PrintBigFloat(BigFloat &A)
           if (didPrintNonZero || getDigit(A.fraction.Coef[i], NBDEC_BASE - 1 - j) != 0)
           {
             didPrintNonZero = true;
-            std::cout << getDigit(A.fraction.Coef[i], NBDEC_BASE - 1 - j);
+            str += '0' + getDigit(A.fraction.Coef[i], NBDEC_BASE - 1 - j);
           }
         }
       }
-      std::cout << std::endl;
+      return str;
     }
     else
     {
@@ -437,18 +439,18 @@ void PrintBigFloat(BigFloat &A)
           if (didPrintNonZero || getDigit(A.fraction.Coef[i], NBDEC_BASE - 1 - j) != 0)
           {
             didPrintNonZero = true;
-            std::cout << getDigit(A.fraction.Coef[i], NBDEC_BASE - 1 - j);
+            str += '0' + getDigit(A.fraction.Coef[i], NBDEC_BASE - 1 - j);
           }
         }
 
         if (pointPos == 0)
         {
-          cout << ".";
+          str += ".";
         }
         pointPos--;
       }
-      std::cout << std::endl;
     }
+    return str;
   }
   else
   {
@@ -463,7 +465,7 @@ void PrintBigFloat(BigFloat &A)
         if (didPrintNonZero || getDigit(A.fraction.Coef[i], NBDEC_BASE - 1 - j) != 0)
         {
           didPrintNonZero = true;
-          std::cout << getDigit(A.fraction.Coef[i], NBDEC_BASE - 1 - j);
+          str += '0' + getDigit(A.fraction.Coef[i], NBDEC_BASE - 1 - j);
         }
       }
     }
@@ -471,9 +473,14 @@ void PrintBigFloat(BigFloat &A)
     {
       for (int j = 0; j < NBDEC_BASE; j++)
       {
-        std::cout << 0;
+        str += "0";
       }
     }
-    std::cout << std::endl;
+    return str;
   }
+  return "NEVER REACHABLE!!!";
+}
+void PrintBigFloat(BigFloat &A)
+{
+  cout << toString(A) << endl;
 }
