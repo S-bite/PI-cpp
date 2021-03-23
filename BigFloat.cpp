@@ -392,10 +392,29 @@ int getDigit(int num, int pos)
   return num % 10;
 }
 
-void InitializeBigFloatFromString(BigFloat &A, string str)
+void InitializeBigFloatFromString(BigFloat &A, string &str)
 {
   InitializeBigFloat(A, POSI, 0, 0);
+  // zeropading fraction part of str
+  // 0.01 -> 0.0100
+  // 0.012 -> 0.0120
+  // 10.01 -> 10.0100
+
   int pos = 0;
+  for (int i = 0; i < str.size(); i++)
+  {
+    if (str[i] == '.')
+    {
+      pos = i;
+      break;
+    }
+  }
+  while ((str.size() - pos - 1) % NBDEC_BASE != 0)
+  {
+    str += "0";
+  }
+  A.exponent = -(str.size() - pos - 1) / NBDEC_BASE;
+  pos = 0;
   string chunk = "";
   for (int i = str.size() - 1; i >= 0; i--)
   {

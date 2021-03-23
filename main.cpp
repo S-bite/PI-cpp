@@ -1,9 +1,13 @@
 #include <iostream>
+#include <vector>
+#include "testUtil.hpp"
 #include "BigFloat.hpp"
 #include "FFT.hpp"
 using std::cerr;
 using std::cout;
 using std::endl;
+using std::vector;
+
 long long C3over24 = 10939058860032000;
 long long A = 13591409;
 long long B = 545140134;
@@ -116,12 +120,24 @@ void test()
   // InitializeBigFloat(c);
 }
 
+void testIO()
+{
+  BigFloat A;
+  vector<string> strs = {"12345.1", "123456.12", "12345678.123", "12345678.1234", "-1"};
+  for (auto str : strs)
+  {
+    InitializeBigFloatFromString(A, str);
+    PrintBigFloat(A);
+    assertEqual(toString(A), str);
+  }
+}
+
 int main()
 {
-  //test();
-  //  return 0;
+  testIO();
+  return 0;
   BigFloat P, Q, T, pi, tmp, _12, invSqrtC;
-  binary_splitting(P, Q, T, 0, 4);
+  binary_splitting(P, Q, T, 0, 5);
   cout << "P = ";
   PrintBigFloat(P);
   cout << "Q = ";
