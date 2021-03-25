@@ -3,6 +3,8 @@
 #include "testUtil.hpp"
 #include "BigFloat.hpp"
 #include "FFT.hpp"
+#include <fstream>
+#include <chrono>
 using std::cerr;
 using std::cin;
 using std::cout;
@@ -139,6 +141,7 @@ void testIO()
 
 int main()
 {
+  auto start = std::chrono::system_clock::now();
   long long prec;
   cin >> prec;
   long long N = std::max(1ll, prec / 14);
@@ -153,6 +156,11 @@ int main()
   // PrintBigFloat(Q);
   // cout << "T = ";
   // PrintBigFloat(T);
+  auto end = std::chrono::system_clock::now();
+  auto msec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+  cerr << "binary_splitting: " << msec << " [msec]" << endl;
+  start = std::chrono::system_clock::now();
+
   pi = Q;
   InitializeBigFloat(tmp, POSI, 0, C);
   MulBigFloat(tmp, pi, pi);
@@ -177,6 +185,19 @@ int main()
   MulBigFloat(tmp, invSqrtC, tmp);
   //PrintBigFloat(tmp);
   MulBigFloat(tmp, pi, pi);
-  cout << "PI=";
-  PrintBigFloat(pi);
+  end = std::chrono::system_clock::now();
+  msec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+  cerr << "final caululation: " << msec << " [msec]" << endl;
+  start = std::chrono::system_clock::now();
+
+  std::ofstream ofs("pi.txt");
+  if (!ofs)
+  {
+    cout << "Can't open file" << endl;
+    return 0;
+  }
+  ofs << toString(pi) << endl;
+  end = std::chrono::system_clock::now();
+  msec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
+  cerr << "save to file: " << msec << " [msec]" << endl;
 }
