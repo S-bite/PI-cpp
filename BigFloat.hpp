@@ -32,7 +32,7 @@ void InverseSqrt(BigFloat A, BigFloat &B);
 double toDouble(BigFloat &A);
 void InitializeBigFloatFromString(BigFloat &A, string str);
 string toString(BigFloat &A);
-
+void shrink(BigFloat &A);
 void changePrecision(BigFloat &A, int prec);
 
 #endif

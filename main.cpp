@@ -145,7 +145,7 @@ int main()
   long long prec;
   cin >> prec;
   long long N = std::max(1ll, prec / 14);
-  PRECISION = prec + 10;
+  PRECISION = prec / NBDEC_BASE + 10;
   //testIO();
   //return 0;
   BigFloat P, Q, T, pi, tmp, _12, invSqrtC;
@@ -185,6 +185,8 @@ int main()
   MulBigFloat(tmp, invSqrtC, tmp);
   //PrintBigFloat(tmp);
   MulBigFloat(tmp, pi, pi);
+  shrink(pi);
+  changePrecision(pi, PRECISION);
   end = std::chrono::system_clock::now();
   msec = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
   cerr << "final caululation: " << msec << " [msec]" << endl;
