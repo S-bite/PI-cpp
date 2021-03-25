@@ -122,14 +122,16 @@ void test()
 
 void testIO()
 {
+  cerr << "start testIO()" << endl;
   BigFloat A;
-  vector<string> strs = {"12345.1", "123456.12", "12345678.123", "12345678.1234", "-1"};
+  vector<string> strs = {"12345.10", "123456.12", "12345678.123", "12345678.1234", "-1.", "-1234.5678", "-1234.567", "-1234.56", "-0.123", "0.0123"};
   for (auto str : strs)
   {
     InitializeBigFloatFromString(A, str);
-    PrintBigFloat(A);
-    assertEqual(toString(A), str);
+    //assertEqual(toString(A), str);
+    cerr << str << " -> " << toString(A) << endl;
   }
+  cerr << "done testIO()" << endl;
 }
 
 int main()

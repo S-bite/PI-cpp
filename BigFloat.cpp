@@ -392,14 +392,19 @@ int getDigit(int num, int pos)
   return num % 10;
 }
 
-void InitializeBigFloatFromString(BigFloat &A, string &str)
+void InitializeBigFloatFromString(BigFloat &A, string str)
 {
   InitializeBigFloat(A, POSI, 0, 0);
+  if (str[0] == '-')
+  {
+    A.sign = NEGA;
+    str.erase(0, 1);
+  }
+
   // zeropading fraction part of str
   // 0.01 -> 0.0100
   // 0.012 -> 0.0120
   // 10.01 -> 10.0100
-
   int pos = 0;
   for (int i = 0; i < str.size(); i++)
   {
@@ -493,7 +498,12 @@ string toString(BigFloat &A)
 
         if (pointPos == 0)
         {
+          if (didPrintNonZero == false)
+          {
+            str += "0";
+          }
           str += ".";
+          didPrintNonZero = true;
         }
         pointPos--;
       }
