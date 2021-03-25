@@ -298,6 +298,7 @@ void Inverse(BigFloat A, BigFloat &B)
     //PrintBigFloat(B);
     assert(B.fraction.Size <= B.fraction.Coef.size());
     shrink(B);
+    changePrecision(B, PRECISION);
     if (B.fraction == back)
     {
       break;
@@ -305,7 +306,7 @@ void Inverse(BigFloat A, BigFloat &B)
 
     // PrintBigFloat(B);
     back = B.fraction;
-    changePrecision(B, PRECISION);
+
     //PrintBigFloat(B);
   }
   // cerr << "done" << endl;
@@ -349,14 +350,14 @@ void InverseSqrt(BigFloat A, BigFloat &B)
     SubBigFloat(B, tmp, B);
     UpdateBigInt(B.fraction);
     changePrecision(tmp, PRECISION);
-
+    shrink(B);
+    changePrecision(B, PRECISION);
     if (B.fraction == back)
     {
       break;
     }
     //  PrintBigFloat(B);
     back = B.fraction;
-    changePrecision(B, PRECISION);
   }
   // cerr << "done" << endl;
 }
