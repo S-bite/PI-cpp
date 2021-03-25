@@ -9,11 +9,11 @@ using std::cerr;
 using std::cout;
 using std::endl;
 using std::string;
-
+long long PRECISION;
 void InitializeBigFloat(BigFloat &A, bool sign, int exponent, long long fraction)
 {
   assert(fraction >= 0);
-  InitializeBigInt(A.fraction, 100000);
+  InitializeBigInt(A.fraction, 100000000);
   A.exponent = exponent;
   A.sign = sign;
   A.fraction.Size = 1;
@@ -94,7 +94,7 @@ void changePrecision(BigFloat &A, int prec)
   {
     return;
   }
-  cerr << "changePrecision" << endl;
+  // cerr << "changePrecision" << endl;
   int diff = A.fraction.Size - prec;
   A.exponent += diff;
 
@@ -121,7 +121,7 @@ void shrink(BigFloat &A)
   int diff = 0;
   while (A.fraction.Coef[diff] == 0)
     diff++;
-  cerr << diff << " " << A.fraction.Coef.size() << endl;
+  //cerr << diff << " " << A.fraction.Coef.size() << endl;
   changeExp(A, A.exponent + diff);
 }
 void AddBigFloat(BigFloat A, BigFloat B, BigFloat &C)
@@ -257,7 +257,7 @@ void DivideBigFloat(BigFloat A, BigFloat B, BigFloat &C)
   changePrecision(A, A.fraction.SizeMax / 2 - 1);
 
   MulBigFloat(A, tmp, C);
-  PrintBigFloat(C);
+  // PrintBigFloat(C);
 }
 void Inverse(BigFloat A, BigFloat &B)
 {
@@ -267,19 +267,18 @@ void Inverse(BigFloat A, BigFloat &B)
   InitializeBigFloat(one, POSI, 0, 1);
   InitializeBigFloat(tmp, POSI, 0, 1);
   InitializeBigFloat(tmp2, POSI, 0, 1);
-  changePrecision(A, 100);
+  changePrecision(A, PRECISION);
   //PrintBigFloat(A);
-  long long init = (long long)((1.0 / toDouble(A)) * (double)BASE * (double)BASE);
-  cerr << "init " << toDouble(A) << endl;
-  //  cerr << (int)((1.0 / toDouble(A)) * (double)BASE) << endl;
-  //InitializeBigFloat(B, POSI, -20, 6000);
-  InitializeBigFloat(B, POSI, -20, 6000);
+  long long init = (long long)((1.0 / A.fraction.Coef[A.fraction.Size - 1]) * (double)BASE);
+
+  InitializeBigFloat(B, POSI, -(A.fraction.Size + A.exponent) - 1, init);
   //PrintBigFloat(B);
   auto back = B.fraction;
-  for (int i = 0; i < 100; i++)
+  for (int i = 0;; i++)
   {
-    cerr << "start" << endl;
-    PrintBigFloat(B);
+    cerr << "Inverse: loop " << i << endl;
+    //PrintBigFloat(B);
+    assert(B.sign == A.sign);
     //B = B + B * (1 - A * B);
     MulBigFloat(A, B, tmp);
     //PrintBigFloat(tmp);
@@ -298,15 +297,15 @@ void Inverse(BigFloat A, BigFloat &B)
     UpdateBigInt(B.fraction);
     //PrintBigFloat(B);
     assert(B.fraction.Size <= B.fraction.Coef.size());
+    shrink(B);
     if (B.fraction == back)
     {
       break;
     }
-    shrink(B);
 
     // PrintBigFloat(B);
     back = B.fraction;
-    changePrecision(B, 200);
+    changePrecision(B, PRECISION);
     //PrintBigFloat(B);
   }
   // cerr << "done" << endl;
@@ -325,29 +324,31 @@ void InverseSqrt(BigFloat A, BigFloat &B)
   InitializeBigFloat(B, POSI, -2, init);
   PrintBigFloat(B);
   auto back = B.fraction;
-  for (int i = 0; i < 4; i++)
+  for (int i = 0;; i++)
   {
+    cerr << "InverseSqrt: loop " << i << endl;
+
     //  PrintBigFloat(B);
     //B = B - 0.5 * B * (A * B * B - 1);
     //  PrintBigFloat(B);
     MulBigFloat(A, B, tmp);
-    changePrecision(tmp, 100);
+    changePrecision(tmp, PRECISION);
 
     MulBigFloat(B, tmp, tmp);
-    changePrecision(tmp, 100);
+    changePrecision(tmp, PRECISION);
 
     SubBigFloat(tmp, one, tmp);
-    changePrecision(tmp, 100);
+    changePrecision(tmp, PRECISION);
 
     MulBigFloat(B, tmp, tmp);
-    changePrecision(tmp, 100);
+    changePrecision(tmp, PRECISION);
 
     MulBigFloat(half, tmp, tmp);
-    changePrecision(tmp, 100);
+    changePrecision(tmp, PRECISION);
 
     SubBigFloat(B, tmp, B);
     UpdateBigInt(B.fraction);
-    changePrecision(tmp, 100);
+    changePrecision(tmp, PRECISION);
 
     if (B.fraction == back)
     {
@@ -355,7 +356,7 @@ void InverseSqrt(BigFloat A, BigFloat &B)
     }
     //  PrintBigFloat(B);
     back = B.fraction;
-    changePrecision(B, 100);
+    changePrecision(B, PRECISION);
   }
   // cerr << "done" << endl;
 }
@@ -405,7 +406,7 @@ void InitializeBigFloatFromString(BigFloat &A, string str)
   // 0.01 -> 0.0100
   // 0.012 -> 0.0120
   // 10.01 -> 10.0100
-  int pos = 0;
+  int pos = -1;
   for (int i = 0; i < str.size(); i++)
   {
     if (str[i] == '.')
@@ -413,6 +414,10 @@ void InitializeBigFloatFromString(BigFloat &A, string str)
       pos = i;
       break;
     }
+  }
+  if (pos == -1)
+  {
+    pos = str.size() - 1;
   }
   while ((str.size() - pos - 1) % NBDEC_BASE != 0)
   {

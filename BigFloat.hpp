@@ -3,6 +3,7 @@
 #include <string>
 #include "BigInt.hpp"
 using std::string;
+extern long long PRECISION;
 constexpr bool POSI = true;
 constexpr bool NEGA = false;
 struct BigFloat

@@ -4,6 +4,7 @@
 #include "BigFloat.hpp"
 #include "FFT.hpp"
 using std::cerr;
+using std::cin;
 using std::cout;
 using std::endl;
 using std::vector;
@@ -15,18 +16,18 @@ long long C = 640320;
 
 void PQT_merge(BigFloat &P, BigFloat &Q, BigFloat &T, BigFloat P1, BigFloat P2, BigFloat Q1, BigFloat Q2, BigFloat T1, BigFloat T2)
 {
-  cerr << "merge" << endl;
+  // cerr << "merge" << endl;
   InitializeBigFloat(P);
   InitializeBigFloat(Q);
   InitializeBigFloat(T);
 
-  PrintBigFloat(P1);
-  PrintBigFloat(Q1);
-  PrintBigFloat(T1);
+  // PrintBigFloat(P1);
+  // PrintBigFloat(Q1);
+  // PrintBigFloat(T1);
 
-  PrintBigFloat(P2);
-  PrintBigFloat(Q2);
-  PrintBigFloat(T2);
+  // PrintBigFloat(P2);
+  // PrintBigFloat(Q2);
+  // PrintBigFloat(T2);
   MulBigFloat(P1, P2, P);
   MulBigFloat(Q1, Q2, Q);
   MulBigFloat(T1, Q2, T);
@@ -43,6 +44,7 @@ void binary_splitting(BigFloat &P, BigFloat &Q, BigFloat &T, long long l, long l
   // dump(r);
   // el;
   // mtx.unlock();
+  cerr << "binary_splitting " << l << " " << r << " start" << endl;
   if (l > r)
   {
     InitializeBigFloat(P, POSI, 0, 1);
@@ -90,6 +92,7 @@ void binary_splitting(BigFloat &P, BigFloat &Q, BigFloat &T, long long l, long l
     binary_splitting(P2, Q2, T2, mid, r);
     PQT_merge(P, Q, T, P1, P2, Q1, Q2, T1, T2);
   }
+  cerr << "binary_splitting " << l << " " << r << " done" << endl;
 }
 
 /*
@@ -124,7 +127,7 @@ void testIO()
 {
   cerr << "start testIO()" << endl;
   BigFloat A;
-  vector<string> strs = {"12345.10", "123456.12", "12345678.123", "12345678.1234", "-1.", "-1234.5678", "-1234.567", "-1234.56", "-0.123", "0.0123"};
+  vector<string> strs = {"12345.10", "123456.12", "12345678.123", "12345678.1234", "-1.", "-1234.5678", "-1234.567", "-1234.56", "-0.123", "0.0123", "12"};
   for (auto str : strs)
   {
     InitializeBigFloatFromString(A, str);
@@ -136,16 +139,20 @@ void testIO()
 
 int main()
 {
-  testIO();
-  return 0;
+  long long prec;
+  cin >> prec;
+  long long N = std::max(1ll, prec / 14);
+  PRECISION = prec + 10;
+  //testIO();
+  //return 0;
   BigFloat P, Q, T, pi, tmp, _12, invSqrtC;
-  binary_splitting(P, Q, T, 0, 5);
-  cout << "P = ";
-  PrintBigFloat(P);
-  cout << "Q = ";
-  PrintBigFloat(Q);
-  cout << "T = ";
-  PrintBigFloat(T);
+  binary_splitting(P, Q, T, 0, N);
+  // cout << "P = ";
+  // PrintBigFloat(P);
+  // cout << "Q = ";
+  // PrintBigFloat(Q);
+  // cout << "T = ";
+  // PrintBigFloat(T);
   pi = Q;
   InitializeBigFloat(tmp, POSI, 0, C);
   MulBigFloat(tmp, pi, pi);
@@ -153,22 +160,22 @@ int main()
   InitializeBigFloat(_12, POSI, 0, 12);
   InitializeBigFloat(invSqrtC, POSI, 0, C);
   InverseSqrt(invSqrtC, invSqrtC);
-  PrintBigFloat(invSqrtC);
+  //PrintBigFloat(invSqrtC);
   InitializeBigFloat(tmp, POSI, 0, A);
   MulBigFloat(tmp, Q, tmp);
   AddBigFloat(tmp, T, tmp);
   MulBigFloat(tmp, _12, tmp);
-  PrintBigFloat(tmp);
+  // PrintBigFloat(tmp);
   Inverse(tmp, tmp);
 
-  PrintBigFloat(pi);
-  PrintBigFloat(tmp);
-  PrintBigFloat(invSqrtC);
+  // PrintBigFloat(pi);
+  // PrintBigFloat(tmp);
+  // PrintBigFloat(invSqrtC);
 
-  changePrecision(tmp, 100);
-  changePrecision(invSqrtC, 100);
+  changePrecision(tmp, PRECISION);
+  changePrecision(invSqrtC, PRECISION);
   MulBigFloat(tmp, invSqrtC, tmp);
-  PrintBigFloat(tmp);
+  //PrintBigFloat(tmp);
   MulBigFloat(tmp, pi, pi);
   cout << "PI=";
   PrintBigFloat(pi);

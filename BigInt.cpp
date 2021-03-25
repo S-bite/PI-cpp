@@ -21,7 +21,7 @@ using std::vector;
 
 void InitializeBigInt(BigInt &A, long MaxSize)
 {
-  A.Coef.resize(MaxSize);
+  A.Coef.resize(1);
   AllocatedMemory += MaxSize * sizeof(double);
   A.Size = 0;
   A.SizeMax = MaxSize;
@@ -153,7 +153,7 @@ void MulBigInt(BigInt &A, BigInt &B, BigInt &C)
 {
   MulWithFFT(A.Coef, A.Size, B.Coef, B.Size, C.Coef);
   C.Size = A.Size + B.Size - 1;
-  C.SizeMax = std::max(C.SizeMax, C.Size);
+  C.SizeMax = C.Size + 10;
   C.Coef.resize(C.SizeMax);
   UpdateBigInt(C);
 }
