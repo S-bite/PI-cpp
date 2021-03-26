@@ -46,7 +46,7 @@ void binary_splitting(BigFloat &P, BigFloat &Q, BigFloat &T, long long l, long l
   // dump(r);
   // el;
   // mtx.unlock();
-  cerr << "binary_splitting " << l << " " << r << " start" << endl;
+  // cerr << "binary_splitting " << l << " " << r << " start" << endl;
   if (l > r)
   {
     InitializeBigFloat(P, POSI, 0, 1);
@@ -94,7 +94,7 @@ void binary_splitting(BigFloat &P, BigFloat &Q, BigFloat &T, long long l, long l
     binary_splitting(P2, Q2, T2, mid, r);
     PQT_merge(P, Q, T, P1, P2, Q1, Q2, T1, T2);
   }
-  cerr << "binary_splitting " << l << " " << r << " done" << endl;
+  //cerr << "binary_splitting " << l << " " << r << " done" << endl;
 }
 
 /*
