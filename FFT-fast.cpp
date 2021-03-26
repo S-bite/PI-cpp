@@ -35,7 +35,7 @@ void RecursiveFFT(vector<complex<double>> &Coef, vector<complex<double>> &FFT)
     oddCoef[i].real(tmp.real() * wr - tmp.imag() * wi);
     oddCoef[i].imag(tmp.real() * wi + tmp.imag() * wr);
   }
-  if (CoefSize > 2048)
+  if (CoefSize > (1ll << 14))
   {
     std::thread th1(RecursiveFFT, std::ref(evenCoef), std::ref(evenFFT));
     std::thread th2(RecursiveFFT, std::ref(oddCoef), std::ref(oddFFT));
