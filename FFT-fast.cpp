@@ -2,6 +2,7 @@
 #include <cassert>
 #include <complex>
 #include <iostream>
+#include <thread>
 #include <math.h>
 #include <vector>
 using std::complex;
@@ -34,8 +35,19 @@ void RecursiveFFT(vector<complex<double>> &Coef, vector<complex<double>> &FFT)
     oddCoef[i].real(tmp.real() * wr - tmp.imag() * wi);
     oddCoef[i].imag(tmp.real() * wi + tmp.imag() * wr);
   }
-  RecursiveFFT(evenCoef, evenFFT);
-  RecursiveFFT(oddCoef, oddFFT);
+  if (CoefSize > 2048)
+  {
+    std::thread th1(RecursiveFFT, std::ref(evenCoef), std::ref(evenFFT));
+    std::thread th2(RecursiveFFT, std::ref(oddCoef), std::ref(oddFFT));
+    th1.join();
+    th2.join();
+  }
+  else
+  {
+    RecursiveFFT(evenCoef, evenFFT);
+    RecursiveFFT(oddCoef, oddFFT);
+  }
+
   for (long i = 0; i < half; i++)
   {
     FFT[2 * i] = evenFFT[i];
